@@ -1,4 +1,3 @@
-import { FormHTMLAttributes } from 'react';
 import { setupAPIClient } from '../../../services/api';
 import styles from './styles.module.scss';
 import { toast } from "react-toastify";
@@ -9,9 +8,7 @@ import {useEffect} from "react";
 import {useRouter} from "next/router";
 
 import { ChangeEventHandler } from 'react';
-import { ComboBox, CompleteComboBox, OptionCombo } from '../ComboBox';
 import * as React from "react";
-import {ExtratoRowDataProps} from "../../../services/apiClient";
 
 export function useConfirmRedirectIfDirty(isDirty: boolean) {
     const router = useRouter()

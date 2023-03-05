@@ -11,7 +11,7 @@ import {ParsedUrlQuery} from "querystring";
 import {setupAPIClient} from "../../services/api";
 import {SignUpProps, SignUpRowDataProps} from "../../utils/props";
 import {Header} from "../../components/Header";
-import { ComboBox, OptionCombo } from "../../components/ui/ComboBox";
+import { ComboBox} from "../../components/ui/ComboBox";
 import {GenericMaterialTableProps, GenericTable} from "../../components/ui/Table";
 import {userColumn} from "../../utils/columns";
 import {handleRowUpdateUser} from "../../utils/handleUpdate";

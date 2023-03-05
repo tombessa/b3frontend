@@ -4,7 +4,6 @@ import { AuthTokenError } from './errors/AuthTokenError'
 
 import { signOut } from '../contexts/AuthContext'
 import {GetServerSidePropsContext} from "next";
-import {ParsedUrlQuery} from "querystring";
 
 export function setupAPIClient(ctx?: GetServerSidePropsContext){
   let cookies = parseCookies(ctx);
