@@ -6,17 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="b8ecc29f-102b-4bba-a1f2-722580c9b100" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Header/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Header/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/ComboBox/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/ComboBox/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/Table/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/Table/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/contexts/AuthContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/contexts/AuthContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/dashboard/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/dashboard/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/Form/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/Form/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/signup/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/signup/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/services/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/api.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/services/apiClient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/apiClient.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/props.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/props.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/styles/home.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/styles/home.module.scss" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,7 +74,7 @@
       <workItem from="1677973450682" duration="164000" />
       <workItem from="1677973738324" duration="3328000" />
       <workItem from="1678018571628" duration="355000" />
-      <workItem from="1678019338111" duration="19721000" />
+      <workItem from="1678019338111" duration="20413000" />
     </task>
     <servers />
   </component>
