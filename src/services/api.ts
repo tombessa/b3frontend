@@ -3,8 +3,10 @@ import { parseCookies } from 'nookies'
 import { AuthTokenError } from './errors/AuthTokenError'
 
 import { signOut } from '../contexts/AuthContext'
+import {GetServerSidePropsContext} from "next";
+import {ParsedUrlQuery} from "querystring";
 
-export function setupAPIClient(ctx = undefined){
+export function setupAPIClient(ctx: GetServerSidePropsContext){
   let cookies = parseCookies(ctx);
   //const url = "https://manager-project-backend.vercel.app";
   const url = "http://localhost:3333";

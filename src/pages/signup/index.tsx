@@ -74,9 +74,6 @@ export default function SignUp() {
           </Button>
         </form>
 
-        <Link href="/" className={styles.text}>
-          Already have an account? Log in!
-        </Link>
 
       </div>
     </div>

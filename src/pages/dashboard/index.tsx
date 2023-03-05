@@ -1,12 +1,14 @@
 import { setupAPIClient } from "../../services/api"
 import Head from 'next/head';
 import {Header} from '../../components/Header';
+import { toast } from "react-toastify";
 import styles from './styles.module.scss'
 import {canSSRAuth} from "../../utils/canSSRAuth"
-import {canSSRGuest} from "../../utils/canSSRGuest"
+import {DashboardProps} from "../../utils/props";
+import {GetServerSidePropsContext} from "next";
+import {ParsedUrlQuery} from "querystring";
 
-export default function Dashboard(){
-  
+export default function Dashboard({message, user}: DashboardProps){
   return(
     <>
       <Head>
@@ -14,17 +16,18 @@ export default function Dashboard(){
       </Head>
       <div>
         
-        <Header/>
+        <Header name={user.name} email={user.email} id={user.id}/>
         <main>
-
         </main>
       </div>
     </>
   )
 }
 
-export const getServerSideProps = canSSRGuest(async () => {
-  return{
-    props: {}
-  }
+export const getServerSideProps = canSSRAuth(async (ctx: GetServerSidePropsContext<ParsedUrlQuery, string | false | object | undefined>) => {
+    const apiClient = setupAPIClient(ctx);
+    const me = (await apiClient.get('/me')).data
+    let send = {props:{}};
+    send.props = {...send.props, message: {code: 200, message: ""}, user: {id: me.id, name: me.name, email: me.email}}
+    return send;
 })
