@@ -18,8 +18,10 @@ export function ComboBox({...rest}: ComboBoxProps){
 }
 
 export function CompleteComboBox({value, setValue, values}: SelectFormProps){
-  
-  return ((<ComboBox  value={value?value.id:undefined} onChange={((event)=>{setValue(values?values.filter(t=>t.id===event.target.value)[0]:undefined)})}>
+
+  return ((<ComboBox  value={value?value.id:undefined} onChange={((event)=>{
+    setValue(values?values.filter(t=>t.id===event.target.value)[0]:undefined)})
+  }>
     
     {values?values.map((item, index)=> {
         return(

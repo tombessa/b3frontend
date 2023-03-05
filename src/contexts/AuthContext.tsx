@@ -2,23 +2,35 @@ import { createContext, ReactNode, useState } from 'react';
 
 import { api } from '../services/apiClient';
 
-import { destroyCookie, setCookie, parseCookies } from 'nookies'
+import { destroyCookie, setCookie,  parseCookies } from 'nookies'
 import Router from 'next/router';
 import {toast} from "react-toastify";
+import {SignUpRowDataProps} from "../utils/props";
+import {handleUserGet} from "../utils/handleGet";
 
 
 type AuthContextData = {
-  user: UserProps|undefined;
+  user: LoginUserProps|undefined;
   isAuthenticated: boolean;
   signIn: (credentials: SignInProps) => Promise<void>;
   signOut: () => void;
   signUp: (credentials : SignUpProps) => Promise<void>;
 }
 
-export type UserProps = {
+export type LoginUserProps = {
   id: string;
   name: string;
   email: string;
+  role: Role;
+}
+export type Role = typeof Role[keyof typeof Role];
+
+export const Role: {
+  USER: 'USER'
+  ADMIN: 'ADMIN'
+} = {
+  USER: 'USER',
+  ADMIN: 'ADMIN',
 }
 
 type SignInProps = {
@@ -30,6 +42,7 @@ type SignUpProps = {
   name: string;
   email: string;
   password: string;
+  role: string;
 }
 
 type AuthProviderProps = {
@@ -49,7 +62,7 @@ export function signOut(){
 }
 
 export function AuthProvider({ children }: AuthProviderProps){
-  const [user, setUser] = useState<UserProps>();
+  const [user, setUser] = useState<LoginUserProps>();
   const isAuthenticated = !!user;
 
 
@@ -61,7 +74,7 @@ export function AuthProvider({ children }: AuthProviderProps){
       })
       console.log(response.data);
 
-      const { id, name, token } = response.data;
+      const { id, name, token, role } = response.data;
 
       setCookie(undefined, '@nextauth.token', token, {
         maxAge: 60*60, // Expirar em 1 hora
@@ -72,6 +85,7 @@ export function AuthProvider({ children }: AuthProviderProps){
         id,
         name,
         email,
+        role,
       })
 
       //Passar para proximas requisiçoes o nosso token
@@ -88,15 +102,16 @@ export function AuthProvider({ children }: AuthProviderProps){
     }
   }
 
-  async function signUp({name, email, password}: SignUpProps){
+  async function signUp({name, email, password, role}: SignUpProps){
     try{
-      const response = api.post('/users',{
+      const response = await api.post('/users',{
         name,
         email,
-        password
+        password,
+        role
       });
+      console.log(response);
       toast.success("Registration made successfully!");
-      Router.push('/');
     }catch(err){
       toast.error("Error during the register");
       console.log("Erro Register", err);

@@ -2,12 +2,14 @@ import {useContext, useMemo} from 'react';
 import styles from './styles.module.scss';
 import Link from 'next/link';
 import Image from 'next/image';
-import {AuthContext, UserProps} from '../../contexts/AuthContext';
+import {AuthContext} from '../../contexts/AuthContext';
 import {FiLogOut} from 'react-icons/fi';
+import {FaRegAddressCard} from 'react-icons/fa';
 // @ts-ignore
 import logoImgIndex from '../../../public/index.svg';
+import {UserProps} from "../../utils/props";
 
-export function Header({name}: UserProps){
+export function Header({name, role}: UserProps){
     const {signOut} = useContext(AuthContext);
     return(
         <header className={styles.headerContainer}>
@@ -17,6 +19,10 @@ export function Header({name}: UserProps){
                 </Link>
                 <nav className={styles.menuNav}>
                     <div>{name}</div>
+
+                    <Link href="/signup">
+                        <FaRegAddressCard color="#FFF" size={24}/>
+                    </Link>
                     <button onClick={signOut}>
                         <FiLogOut color="#FFF" size={24}/>
                     </button>
