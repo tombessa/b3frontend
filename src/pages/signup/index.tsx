@@ -15,7 +15,7 @@ import { ComboBox} from "../../components/ui/ComboBox";
 import {GenericMaterialTableProps, GenericTable} from "../../components/ui/Table";
 import {userColumn} from "../../utils/columns";
 import {handleRowUpdateUser} from "../../utils/handleUpdate";
-import {handleUserGet} from "../../utils/handleGet";
+import {handleRowGetUser} from "../../utils/handleGet";
 import {handleRowDeleteUser} from "../../utils/handleDelete";
 
 export default function SignUp({dashboard, users}: SignUpProps) {
@@ -51,7 +51,7 @@ export default function SignUp({dashboard, users}: SignUpProps) {
       role: role
     }
     await signUp(data);
-    let newUsers = await handleUserGet();
+    let newUsers = await handleRowGetUser();
     console.log(newUsers);
     setListUsers(newUsers);
     setLoading(false);

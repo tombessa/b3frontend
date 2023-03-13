@@ -1,8 +1,8 @@
-
-import { SelectHTMLAttributes, OptionHTMLAttributes, useEffect } from 'react';
+import {useMemo, useState} from 'react';
+import { SelectHTMLAttributes, OptionHTMLAttributes,  useEffect } from 'react';
 import { SelectFormProps } from '../Form';
 import styles from './styles.module.scss';
-import {useMemo, useState} from 'react';
+
 
 interface ComboBoxProps extends SelectHTMLAttributes<HTMLSelectElement>{}
 interface OptionProps extends OptionHTMLAttributes<HTMLOptionElement>{}
@@ -17,10 +17,14 @@ export function ComboBox({...rest}: ComboBoxProps){
   )
 }
 
+
+
 export function CompleteComboBox({value, setValue, values}: SelectFormProps){
 
   return ((<ComboBox  value={value?value.id:undefined} onChange={((event)=>{
-    setValue(values?values.filter(t=>t.id===event.target.value)[0]:undefined)})
+    if (setValue) {
+      setValue(values ? values.filter(t => t.id === event.target.value)[0] : undefined)
+    }})
   }>
     
     {values?values.map((item, index)=> {

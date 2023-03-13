@@ -1,0 +1,9 @@
+{ "name":"Project",
+"column":[
+	{"name":"id","primitive":"string","required":false,"unique":false,"column_type":{"name":""}},
+	{"name":"name","primitive":"string","required":true,"unique":true,"column_type":{"name":""}},
+	{"name":"url","primitive":"string","required":false,"unique":false,"column_type":{"name":""}},
+	{"name":"accountable_id","primitive":"string","required":false,"unique":false,"column_type":{"name":""}},
+	{"name":"created_by","primitive":"string","required":false,"unique":false,"column_type":{"name":""}},
+	{"name":"updated_by","primitive":"string","required":false,"unique":false,"column_type":{"name":""}}
+]}

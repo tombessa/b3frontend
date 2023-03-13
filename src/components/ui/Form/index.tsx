@@ -9,6 +9,7 @@ import {useRouter} from "next/router";
 
 import { ChangeEventHandler } from 'react';
 import * as React from "react";
+import {ComboBox, CompleteComboBox} from "../ComboBox";
 
 export function useConfirmRedirectIfDirty(isDirty: boolean) {
     const router = useRouter()
@@ -44,7 +45,8 @@ type Props = {
 
 export type ItemFormProps = {
     type: string 
-    name: string 
+    name: string
+    setName?: React.Dispatch<React.SetStateAction<any>>
     required: boolean
     label: string
     autoComplete: string
@@ -54,7 +56,7 @@ export type ItemFormProps = {
 
 export type SelectFormProps = {
     value: any
-    setValue: React.Dispatch<React.SetStateAction<any>>
+    setValue?: React.Dispatch<React.SetStateAction<any>>
     values?: Array<any>
     handleChange?: ChangeEventHandler<HTMLSelectElement>
 }
@@ -84,9 +86,8 @@ const renderForm = ({fields, register, errors, isSubmitting}: FormProps) => {
     return <>
         {fields.map(field => {
             return <>                
-                {(field.type?(<div><Input required={field.required} placeholder={field.placeholder} type={field.type} autoComplete={field.autoComplete}  /><div className={styles.error}>{errors[field.name]?.message}</div></div>):"")}                
-                
-                
+                {(field.type==="Input"?(<div><Input required={field.required} placeholder={field.placeholder} type={field.type} autoComplete={field.autoComplete}  /><div className={styles.error}>{errors[field.name]?.message}</div></div>):"")}
+                {(field.type==="Combobox"?<CompleteComboBox value={field.name} setValue={field.setName} values={field.values}/>:"")}
             </>
         })}
 
