@@ -9,7 +9,6 @@ import {setupAPIClient} from "../../services/api";
 import {Header} from "../../components/Header";
 import {GenericMaterialTableProps, GenericTable} from "../../components/ui/Table";
 import {userColumn} from "../../utils/columns";
-import {handleRowUpdateUser} from "../../utils/handleUpdate";
 import {handleRowGetUser} from "../../utils/handleGet";
 import {handleRowDeleteUser} from "../../utils/handleDelete";
 import { Form, ItemFormProps, TYPEELEMENT, ACTIONFORM } from '../../components/ui/Form/index';
@@ -77,7 +76,6 @@ export default function SignUp({dashboard, users, roles}: SignUpProps) {
       columns: userColumn(),
       data: listUsers,
       handleRowDelete: handleRowDeleteUser,
-      handleRowUpdate: handleRowUpdateUser,
       setData: setUserItem,
       options: {
         pageSize: 10
@@ -99,6 +97,7 @@ export default function SignUp({dashboard, users, roles}: SignUpProps) {
     }];
     let register  = getFieldsRegister(param);
     register.forEach(t=>ret.push(t));
+
     ret.push({
       typeDiv: TYPEELEMENT.CHECKBOX,
       type: "checkbox",
@@ -171,7 +170,6 @@ export default function SignUp({dashboard, users, roles}: SignUpProps) {
     return(<GenericTable rest={rest} setRest={setRest} selectedRow={userSelected} setSelectedRow={setUserSelected} />);
   },[rest, userSelected, setUserSelected]);
 
-  console.log(userSelected);
   return (
     <>
     <Head>

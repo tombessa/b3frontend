@@ -77,7 +77,7 @@ export function AuthProvider({ children }: AuthProviderProps){
       })
 
       const { id, name, token, role } = response.data;
-      console.log("1");
+
       setCookie(undefined, '@nextauth.token', token, {
         maxAge: 60*60, // Expirar em 1 hora
         path: "/" // Quais caminhos terao acesso ao cookie
