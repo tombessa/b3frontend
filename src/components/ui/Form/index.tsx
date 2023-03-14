@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import { toast } from "react-toastify";
 import {FieldValues, useForm, UseFormRegister} from "react-hook-form";
 import { Button } from '../Button';
-import { CheckBox, Input } from '../Input';
+import { Input } from '../Input';
 import {useEffect} from "react";
 import {useRouter} from "next/router";
 

@@ -5,7 +5,6 @@ import { api } from '../services/apiClient';
 import { destroyCookie, setCookie,  parseCookies } from 'nookies'
 import Router from 'next/router';
 import {toast} from "react-toastify";
-import {SignUpRowDataProps} from "../utils/props";
 
 
 type AuthContextData = {
