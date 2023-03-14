@@ -5,10 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b8ecc29f-102b-4bba-a1f2-722580c9b100" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/ComboBox/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/ComboBox/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/ui/Form/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/Form/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/dashboard/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/dashboard/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/signup/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/signup/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/services/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/api.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/handleDelete.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/handleDelete.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/handleGet.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/handleGet.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/handleUpdate.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/handleUpdate.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/styles/home.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/styles/home.module.scss" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +56,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
     &quot;ts.external.directory.path&quot;: &quot;C:\\Portfolio\\manager-project-frontend\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -75,6 +82,9 @@
       <workItem from="1677973738324" duration="3328000" />
       <workItem from="1678018571628" duration="355000" />
       <workItem from="1678019338111" duration="20413000" />
+      <workItem from="1678745351652" duration="1046000" />
+      <workItem from="1678746464034" duration="606000" />
+      <workItem from="1678747105686" duration="3671000" />
     </task>
     <servers />
   </component>
@@ -91,5 +101,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/.." />
+    </ignored-roots>
   </component>
 </project>

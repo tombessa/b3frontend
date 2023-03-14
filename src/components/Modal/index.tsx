@@ -6,9 +6,10 @@ import { FiX } from 'react-icons/fi'
 interface ModalOrderProps{
   isOpen: boolean;
   onRequestClose: () => void;
+  component: React.ReactNode;
 }
 
-export function ModalDash({ isOpen, onRequestClose }: ModalOrderProps){
+export function ModalDash({ isOpen, onRequestClose, component }: ModalOrderProps){
 
   const customStyles = {
     content:{
@@ -18,7 +19,7 @@ export function ModalDash({ isOpen, onRequestClose }: ModalOrderProps){
       right: 'auto',
       padding: '30px',
       transform: 'translate(-50%, -50%)',
-      backgroundColor: '#1d1d2e'
+      backgroundColor: '#1d1d2e',      
     }
   };
   
@@ -40,8 +41,7 @@ export function ModalDash({ isOpen, onRequestClose }: ModalOrderProps){
     </button>
 
     <div className={styles.container}>
-
-
+      {component}
     </div>
 
    </Modal>

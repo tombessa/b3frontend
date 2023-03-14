@@ -1,29 +1,57 @@
-import {FormEvent, useContext, useMemo, useState} from "react";
+import { FormEvent, useContext, useMemo, useState, } from 'react';
 import Head from 'next/head'
 import styles from '../../../styles/home.module.scss';
-import { Input } from '../../components/ui/Input'
-import { Button } from '../../components/ui/Button'
-import {AuthContext} from '../../contexts/AuthContext';
-import {toast} from "react-toastify";
+import {AuthContext, Role} from '../../contexts/AuthContext';
 import {canSSRAuth} from "../../utils/canSSRAuth";
 import {GetServerSidePropsContext} from "next";
 import {ParsedUrlQuery} from "querystring";
 import {setupAPIClient} from "../../services/api";
-import {SignUpProps, SignUpRowDataProps} from "../../utils/props";
 import {Header} from "../../components/Header";
-import { ComboBox} from "../../components/ui/ComboBox";
 import {GenericMaterialTableProps, GenericTable} from "../../components/ui/Table";
 import {userColumn} from "../../utils/columns";
 import {handleRowUpdateUser} from "../../utils/handleUpdate";
-import {handleUserGet} from "../../utils/handleGet";
+import {handleRowGetUser} from "../../utils/handleGet";
 import {handleRowDeleteUser} from "../../utils/handleDelete";
+import { Form, ItemFormProps, TYPEELEMENT, ACTIONFORM } from '../../components/ui/Form/index';
+import { DashboardProps, RowData } from '../../utils/props';
+import { ModalDash } from '../../components/Modal';
 
-export default function SignUp({dashboard, users}: SignUpProps) {
+export interface SignUpRowDataProps extends UserProps, RowData {
+
+}
+
+export type EnumProps = {
+  id: string;
+  value: string;
+}
+
+export type UserProps={
+  id?: string
+  name?: string
+  email?: string
+  password?: string
+  role?: string
+  try?: number
+  blocked?: boolean
+  active?: boolean
+}
+
+export type SignUpProps = {
+  dashboard: DashboardProps
+  users: SignUpRowDataProps[]
+  roles: EnumProps[]
+}
+
+export default function SignUp({dashboard, users, roles}: SignUpProps) {
   const {signUp} = useContext(AuthContext);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [role, setRole] = useState('USER');
-  const [password, setPassword] = useState('');
+  
+  const [user, setUser] = useState({
+    name: '',
+    email: '',
+    password: '',
+    role: Role.USER
+  });
+
   const [loading, setLoading] = useState(false);
   const [userItem, setUserItem] = useState<SignUpRowDataProps>();
   const [userSelected, setUserSelected] = useState<SignUpRowDataProps>();
@@ -31,32 +59,14 @@ export default function SignUp({dashboard, users}: SignUpProps) {
   const[listUsers, setListUsers] = useState<SignUpRowDataProps[]>([]);
 
   function clearForm(){
-    setName('');
-    setEmail('');
-    setRole('USER');
-    setPassword('');
+    setUser({
+      name: '',
+      email: '',
+      password: '',
+      role: Role.USER
+    });
   }
 
-  async function handleSignUp(event: FormEvent){
-    event.preventDefault();
-    if(name==='' || email ==='' || password==='') {
-      toast.error("Required Fields.");
-      return;
-    }
-    setLoading(true);
-    let data = {
-      name: name,
-      email: email,
-      password: password,
-      role: role
-    }
-    await signUp(data);
-    let newUsers = await handleUserGet();
-    console.log(newUsers);
-    setListUsers(newUsers);
-    setLoading(false);
-    clearForm();
-  }
 
   useMemo(async () => {
     setListUsers(users);
@@ -75,10 +85,93 @@ export default function SignUp({dashboard, users}: SignUpProps) {
     });
   },[listUsers]);
 
+  function getFieldsUpdate(param: any):ItemFormProps[]{
+    let ret : ItemFormProps[] = [{
+      typeDiv: TYPEELEMENT.INPUTBOX,
+      type: "text",
+      required: true,
+      label: "Id",
+      autoComplete: "off",
+      placeholder: "Id",
+      jsonAttribute: "id",
+      value: param.id,
+      disabled:true
+    }];
+    let register  = getFieldsRegister(param);
+    register.forEach(t=>ret.push(t));
+    ret.push({
+      typeDiv: TYPEELEMENT.CHECKBOX,
+      type: "checkbox",
+      required: true,
+      label: "Blocked",
+      autoComplete: "off",
+      placeholder: "Blocked",
+      jsonAttribute: "blocked",
+      value: param.blocked,
+      disabled:false
+    });
+    return ret;
+  }
+
+  function getFieldsRegister(param: any):ItemFormProps[]{
+    const ret : ItemFormProps[] = [{
+      typeDiv: TYPEELEMENT.INPUTBOX,
+      type: "text",
+      required: true,
+      label: "Name",
+      autoComplete: "off",
+      placeholder: "Name",
+      jsonAttribute: "name",
+      value: param.name,
+      disabled:false
+    },{
+      typeDiv: TYPEELEMENT.INPUTBOX,
+      type: "text",
+      required: true,
+      label: "E-mail",
+      autoComplete: "off",
+      placeholder: "E-mail",
+      jsonAttribute:"email",
+      value: param.email,
+      disabled:false
+    },{
+      typeDiv: TYPEELEMENT.INPUTBOX,
+      type: "password",
+      required: true,
+      label: "Password",
+      autoComplete: "off",
+      placeholder: "Password",
+      jsonAttribute:"password",
+      value: param.password,
+      disabled:false
+    },{
+      typeDiv: TYPEELEMENT.COMBOBOX,
+      type: "text",
+      required: true,
+      label: "role",
+      autoComplete: "off",
+      placeholder: "role",
+      values: [{"id":Role.USER, "value":"Usuário"}, {"id":Role.ADMIN, "value":"Administrador"}],
+      jsonAttribute:"role",
+      value: param.role,
+      disabled:false
+    }];
+    return ret;
+  }
+
+  async function postFormAction(){
+    setUserSelected(undefined);
+    setListUsers(await handleRowGetUser());
+    setLoading(false);
+    clearForm();
+  }
+
+
   const tableUser=useMemo(()=>{
     return(<GenericTable rest={rest} setRest={setRest} selectedRow={userSelected} setSelectedRow={setUserSelected} />);
   },[rest, userSelected, setUserSelected]);
 
+  console.log(userSelected);
   return (
     <>
     <Head>
@@ -89,47 +182,33 @@ export default function SignUp({dashboard, users}: SignUpProps) {
     <div className={styles.containerCenter}>
       <div className={styles.login}>
         <h1>Register</h1>
-
-        <form onSubmit={handleSignUp}>
-          <Input
-            placeholder="Name"
-            type="text"
-            value={name}
-            onChange={ (e) => setName(e.target.value) }
-          />
-
-          <Input
-            placeholder="E-mail"
-            type="text"
-            value={email}
-            onChange={ (e) => setEmail(e.target.value) }
-          />
-
-          <Input
-            placeholder="Password"
-            type="password"
-            value={password}
-            onChange={ (e) => setPassword(e.target.value) }
-          />
-          <ComboBox
-              value={role}
-              onChange={ (e) => setRole(e.target.value) }
-          >
-            <option>USER</option>
-            <option>ADMIN</option>
-          </ComboBox>
-
-          <Button
-            type="submit"
-            loading={loading}
-          >
-            Register
-          </Button>
-        </form>
-
-
+        
+        <Form 
+          postFormAction={postFormAction}
+          state={user} 
+          setState={setUser} 
+          url={'/users'} 
+          fields={getFieldsRegister(user)} 
+          action={ACTIONFORM.POST}
+        />
+        {userSelected?
+        <ModalDash 
+              isOpen={userSelected !== undefined} 
+              onRequestClose={function (): void {
+                setUserSelected(undefined);
+              } }
+              component={<Form 
+                postFormAction={postFormAction}
+                state={userSelected} 
+                setState={setUserSelected} 
+                url={'/users'} 
+                fields={getFieldsUpdate(userSelected)} 
+                action={ACTIONFORM.PATCH}
+              />}
+        />:
+        <div className={styles.containerGrid}>{tableUser}</div>}
       </div>
-      <div className={styles.containerGrid}>{tableUser}</div>
+      
     </div>
     </>
   )

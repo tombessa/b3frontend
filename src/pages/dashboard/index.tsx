@@ -7,6 +7,8 @@ import {canSSRAuth} from "../../utils/canSSRAuth"
 import {DashboardProps} from "../../utils/props";
 import {GetServerSidePropsContext} from "next";
 import {ParsedUrlQuery} from "querystring";
+import Loading from "../../utils/loading";
+import LoadingUtil from "../../utils/loading";
 
 export default function Dashboard({message, user}: DashboardProps){
   return(
@@ -15,8 +17,9 @@ export default function Dashboard({message, user}: DashboardProps){
         <title>Panel - Project Manger</title>
       </Head>
       <div>
-        
+
         <Header name={user.name} email={user.email} id={user.id} role={user.role}/>
+        <LoadingUtil/>
         <main>
         </main>
       </div>
