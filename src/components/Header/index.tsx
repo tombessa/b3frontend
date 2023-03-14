@@ -7,7 +7,8 @@ import {FiLogOut} from 'react-icons/fi';
 import {FaRegAddressCard} from 'react-icons/fa';
 // @ts-ignore
 import logoImgIndex from '../../../public/index.svg';
-import {UserProps} from "../../utils/props";
+import { UserProps } from '../../pages/signup';
+
 
 export function Header({name, role}: UserProps){
     const {signOut} = useContext(AuthContext);
