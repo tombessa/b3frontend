@@ -6,7 +6,6 @@ import { destroyCookie, setCookie,  parseCookies } from 'nookies'
 import Router from 'next/router';
 import {toast} from "react-toastify";
 import {SignUpRowDataProps} from "../utils/props";
-import {handleUserGet} from "../utils/handleGet";
 
 
 type AuthContextData = {
@@ -38,6 +37,11 @@ type SignInProps = {
   password: string;
 }
 
+type PostProps={
+  url: string
+  data: any
+}
+
 type SignUpProps = {
   name: string;
   email: string;
@@ -55,7 +59,7 @@ export const AuthContext = createContext({} as AuthContextData)
 export function signOut(){
   try{
     destroyCookie(undefined, '@nextauth.token')
-    Router.push('/')
+    Router.push('/')    
   }catch{
     console.log('error when leaving')
   }
@@ -72,10 +76,9 @@ export function AuthProvider({ children }: AuthProviderProps){
         email,
         password
       })
-      console.log(response.data);
 
       const { id, name, token, role } = response.data;
-
+      console.log("1");
       setCookie(undefined, '@nextauth.token', token, {
         maxAge: 60*60, // Expirar em 1 hora
         path: "/" // Quais caminhos terao acesso ao cookie
@@ -102,6 +105,7 @@ export function AuthProvider({ children }: AuthProviderProps){
     }
   }
 
+
   async function signUp({name, email, password, role}: SignUpProps){
     try{
       const response = await api.post('/users',{
@@ -110,7 +114,6 @@ export function AuthProvider({ children }: AuthProviderProps){
         password,
         role
       });
-      console.log(response);
       toast.success("Registration made successfully!");
     }catch(err){
       toast.error("Error during the register");

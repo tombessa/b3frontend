@@ -4,11 +4,11 @@ import { AuthTokenError } from './errors/AuthTokenError'
 
 import { signOut } from '../contexts/AuthContext'
 import {GetServerSidePropsContext} from "next";
+import { BASE_URL } from "../utils/constants";
 
 export function setupAPIClient(ctx?: GetServerSidePropsContext){
   let cookies = parseCookies(ctx);
-  const url = "https://manager-project-backend.vercel.app";
-  //const url = "http://localhost:3333";
+  const url = BASE_URL;
   if (url === undefined) {
     const message = `The environment variable "${url}" cannot be "undefined".`;
     throw new Error(message);

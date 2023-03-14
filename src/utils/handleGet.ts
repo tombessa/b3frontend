@@ -1,5 +1,5 @@
+import { SignUpRowDataProps } from "../pages/signup";
 import {setupAPIClient} from "../services/api";
-import {SignUpRowDataProps} from "./props";
 import {canSSRAuth} from "./canSSRAuth";
 import {GetServerSidePropsContext} from "next";
 import {ParsedUrlQuery} from "querystring";

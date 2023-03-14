@@ -1,4 +1,4 @@
-import {SignUpRowDataProps} from "./props";
+import { SignUpRowDataProps } from "../pages/signup";
 import {setupAPIClient} from "../services/api";
 
 

@@ -8,7 +8,7 @@ interface ComboBoxProps extends SelectHTMLAttributes<HTMLSelectElement>{}
 interface OptionProps extends OptionHTMLAttributes<HTMLOptionElement>{}
 
 export function OptionCombo({...rest}: OptionProps){
-  return(<option {...rest} />)
+  return(<option  {...rest} />)
 }
 
 export function ComboBox({...rest}: ComboBoxProps){
@@ -18,10 +18,9 @@ export function ComboBox({...rest}: ComboBoxProps){
 }
 
 
+export function CompleteComboBox({name, value, setValue, values}: SelectFormProps){
 
-export function CompleteComboBox({value, setValue, values}: SelectFormProps){
-
-  return ((<ComboBox  value={value?value.id:undefined} onChange={((event)=>{
+  return ((<ComboBox name={name} value={value?value.id:undefined} onChange={((event)=>{
     if (setValue) {
       setValue(values ? values.filter(t => t.id === event.target.value)[0] : undefined)
     }})
@@ -29,7 +28,7 @@ export function CompleteComboBox({value, setValue, values}: SelectFormProps){
     
     {values?values.map((item, index)=> {
         return(
-        <OptionCombo key={item.id} value={item.id}>
+        <OptionCombo key={index} value={item.id}>
             {item.value}
         </OptionCombo>
         ) 
