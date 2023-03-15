@@ -185,7 +185,7 @@ export default function SignUp({dashboard, users, roles}: SignUpProps) {
           postFormAction={postFormAction}
           state={user} 
           setState={setUser} 
-          url={'/users'} 
+          url={'/user'} 
           fields={getFieldsRegister(user)} 
           action={ACTIONFORM.POST}
         />
@@ -199,7 +199,7 @@ export default function SignUp({dashboard, users, roles}: SignUpProps) {
                 postFormAction={postFormAction}
                 state={userSelected} 
                 setState={setUserSelected} 
-                url={'/users'} 
+                url={'/user'} 
                 fields={getFieldsUpdate(userSelected)} 
                 action={ACTIONFORM.PATCH}
               />}
@@ -215,7 +215,7 @@ export default function SignUp({dashboard, users, roles}: SignUpProps) {
 export const getServerSideProps = canSSRAuth(async (ctx: GetServerSidePropsContext<ParsedUrlQuery, string | false | object | undefined>) => {
   const apiClient = setupAPIClient(ctx);
   const me = (await apiClient.get('/me')).data
-  const users : SignUpRowDataProps[] = (await apiClient.get('/users')).data
+  const users : SignUpRowDataProps[] = (await apiClient.get('/user')).data
   let send = {props:{}};
   send.props = {...send.props, dashboard: {message: {code: 200, message: ""},
       user: {id: me.id, name: me.name, email: me.email, role: me.role}},

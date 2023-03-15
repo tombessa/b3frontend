@@ -4,10 +4,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {AuthContext} from '../../contexts/AuthContext';
 import {FiLogOut} from 'react-icons/fi';
-import {FaRegAddressCard} from 'react-icons/fa';
+
 // @ts-ignore
 import logoImgIndex from '../../../public/index.svg';
 import { UserProps } from '../../pages/signup';
+import { Paths } from '../../utils/router';
 
 
 export function Header({name, role}: UserProps){
@@ -21,9 +22,7 @@ export function Header({name, role}: UserProps){
                 <nav className={styles.menuNav}>
                     <div>{name}</div>
 
-                    <Link href="/signup">
-                        <FaRegAddressCard color="#FFF" size={24}/>
-                    </Link>
+                    <Paths/>
                     <button onClick={signOut}>
                         <FiLogOut color="#FFF" size={24}/>
                     </button>

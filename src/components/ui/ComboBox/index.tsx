@@ -19,7 +19,7 @@ export function ComboBox({...rest}: ComboBoxProps){
 
 
 export function CompleteComboBox({name, value, setValue, values}: SelectFormProps){
-
+  
   return ((<ComboBox name={name}
                      value={value?value.id:undefined}
                      onChange={((event)=>{
@@ -28,7 +28,7 @@ export function CompleteComboBox({name, value, setValue, values}: SelectFormProp
                        }})}
   >
     
-    {values?values.map((item, index)=> {
+    {Array.isArray(values)?values.map((item, index)=> {
         return(
         <OptionCombo key={index} value={item.id}>
             {item.value}

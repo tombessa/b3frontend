@@ -1,296 +1,390 @@
 
 class ColumnType{
 	[string]$name
+	[string]$label
+	[string]$parent
+	[string]$parentKey
 }
 class Column{
 	[string]$name
+	[string]$label
 	[string]$primitive
 	[boolean]$required
 	[boolean]$unique
 	[ColumnType[]]$column_type
+	[boolean]$update
+	[boolean]$disable
+	[string]$type
+	[string]$typeDiv
+	[int]$size
+	[boolean]$isCurrency
+	[boolean]$isHyperlink
+	[string]$path
 }
 class Entity {
     [string]$name
 	[Column[]]$column
+	[string]$icon
+	[string]$icon_path
 }
 
-echo ******************************************************* "*** Create new Files For Entity***" ******************************************************* 
-#$entity = [Entity]::new()
-#$entity.name = Read-Host -Prompt 'Entity Name'
-
-$functions = "Create", "List", "Update", "Delete"
-$actions =  "create", "findMany", "update", "delete"
-$from_params =  "body", "query", "body", "body"
-$url_action =  "post", "get", "patch", "delete"
+echo ******************************************************* "*** Create new Files For Page***" ******************************************************* 
 
 $diretorio_atual=(Get-Item .).FullName
 $TemplateParameterFileLocal="$diretorio_atual\entity.JSON"
 $entity = Get-Content $TemplateParameterFileLocal | Out-String | ConvertFrom-Json
-
-#foreach ($item_entity in $entity) {
-#	$name=$item_entity.name
-#	echo "Entity Name: $name"
-#	foreach ($item_column in $item_entity.column) {
-#		$column_name=$item_column.name
-#		$column_primitive=$item_column.primitive
-#		$column_required=$item_column.required
-#		$column_unique=$item_column.unique
-#		echo "	Column Name: $column_name"
-#		echo "	Column Primitive: $column_primitive"
-#		echo "	Column Required: $column_required"
-#		echo "	Column Unique: $column_unique"
-#	}
-#}
-
-$unique_list_column=""
-$interface_column=""
-$role_list=""
-$columns_list=""
-$controller_param=""
-$controller_list=""
-$required_code=""
-$required_column_list=""
-$where = "`n"
-$data = "`n"
-$list_enum_1=""
-$list_enum_2=""
-$enum_list=""
-$router=""
-$data_required=""
-Get-ChildItem -Path "$diretorio_atual" -Include "routes.ts" -File -Recurse | foreach { $_.Delete()}
-Copy-Item -Path "$diretorio_atual\_routes.template" -Destination "$diretorio_atual\routes.ts" -Recurse
+$HANDLE_DELETE=""
+$HANDLE_GET=""
 Set-Location "$diretorio_atual"
-		
+
+
 foreach ($item_entity in $entity) {
+	$select_cols=""
+	$update_cols=""
+	$param_props=""
+	$param_props_col=""
+	$enums_server_side="["	
+	$default_columns=""
+	$import_relation=""
 	$name = $item_entity.name
+	$list_relation_props=""
+	$total_size=0
+	$COLUMNS=""
+	$query_server_side=""
+	$param_server_side=""
+	$param_icon=$item_entity.icon
+	$param_icon_path=$item_entity.icon_path
 	echo "Entity Name: $name"
 	foreach ($item_column in $item_entity.column) {
+		$total_size+=$item_column.size
+	}
+	foreach ($item_column in $item_entity.column) {
+		$first_col=(1 -eq 1)
+		$lookup=""
+		$lookup_props=""
+		$index_enum=0
+		$values_param=""
+		$enum_front_side="["
 		$column=$item_column.name
 		$primitive=$item_column.primitive
 		$required=$item_column.required
 		$unique=$item_column.unique
+		$typeDiv=$item_column.typeDiv
+		$type=$item_column.type
+		$label=$item_column.label
+		$disabled=$item_column.disable
+		$path_server_side=$item_column.path
+		
+		
 		echo "	Column Name: $column"
 		echo "	Column Primitive: $primitive"
 		echo "	Column Required: $required"
 		echo "	Column Unique: $unique"
+		echo "	Column typeDiv: $typeDiv"
+		echo "	Column type: $type"
+		echo "	Column label: $label"
+		echo "	Column disabled: $disabled"
 		if($required){
-			$required_code += "	if(! ${column} ){      throw new Error(""'${column}' Required"")    } `n"
-			
-			$interface_column +=  "	${column} : ${primitive}; `n"
+			$interface_column +=  "	${column} : ${primitive} `n"
 		}else{
-			$interface_column +=  "	${column}? : ${primitive}; `n"
-		}
-		$column_init += "	$column : undefined, `n"
-		if($unique){			
-			$unique_list_column += "${column} : ${column}, `n"
-		}
-		$auto_column = !(($column -eq "created_by") -or ($column -eq "updated_by"))
-		if($auto_column){
-			$columns_list +=  $column + ", "
-		}
-		$controller_param +=  "	"+$column + ", `n"	
+			$interface_column +=  "	${column}? : ${primitive} `n"
+		}		
+		$default_columns += "	${column} : undefined,`n"
 		$is_enum = ($primitive -like "*Enum*")
 		if ($is_enum) {
-			$role_list = $role_list + $item_column.column_type + ","
+			$enums_server_side+="["
+			$enums_server_side+="{"
 			foreach ($item_type in $item_column.column_type) {
 				$type = $item_type.name
-				$list_enum_1 += "$type : '$type' `n"
-				$list_enum_2 += "$type' : '$type', `n"
+				$label_enum = $item_type.label
+				$enums_server_side+="	{""id"":$primitive.$type, ""value"":""$label_enum"", ""field"": ""${column}""}, `n"
+				$enum_front_side+="	{""id"":$primitive.$type, ""value"":""$label_enum""}, `n"
 			}
-			$enum_list += "export const ${primitive} : {
-	${list_enum_1}
-}= {
-	${list_enum_2}
-}
-export type ${primitive} = typeof ${primitive}[keyof typeof ${primitive}]; `n"
-			$controller_list += "	${column} :  ${primitive} [${column}], `n"
+			$enums_server_side+="}"
+			$enums_server_side+="],"
+			$lookup="enums[$index_enum]"
+			$lookup_props=" enums, "
+			$index_enum+=1
 		}else{
-			$controller_list += "	${column} :  ${column}, `n"			
+			$is_props = ($primitive -like "*Props*")
+			if($is_props){
+				foreach ($item_type in $item_column.column_type) {
+					$type = $item_type.name
+					$parent = $item_type.parent
+					$parentKey=$item_type.parentKey
+				}
+				$import_relation +="import { $primitive } from '../$type'; `n"
+				$list_relation_props += "	${type}?: $primitive[] `n"
+				$interface_column +=  "	${parent}? : $primitive[] `n"
+				$param_props +=" ,$type "
+				$query_server_side += "
+	const $type = (await apiClient.get('$path_server_side')).data"
+				$param_server_side += "	${type} : ${type}, `n"
+				$param_props_col += ", ${type}?: $primitive[] "
+				$values_param = " $type "
+				$lookup=" $type "
+				$lookup_props=" $type, "
+				
+			}
 		}
+		$enum_front_side+="]"
+		if($enum_front_side -eq "[]"){
+			if($values_param -eq ""){
+				$values_list=""
+			}else{
+				$values_list="values: $values_param ? getArrayCombo(""$parentKey"" , $values_param) : [],"
+			}
+			
+		}else{
+			$values_list="values: [$enum_front_side],"
+		}
+		if($disabled){
+			$disabled_lower="true"
+		}else{
+			$disabled_lower="false"
+		}
+		if($required){
+			$required_lower="true"
+		}else{
+			$required_lower="false"
+		}
+		if($item_column.update){
+		$update_cols+="	{
+      typeDiv: $typeDiv,
+      type: ""$type"",
+      required: $required_lower,
+      label: ""$label"",
+      autoComplete: ""off"",
+      placeholder: ""$label"",
+      jsonAttribute: ""$column"",
+      value: param.$column,
+      disabled: $disabled_lower,
+	  ${values_list}
+    },`n"
+		}
+		$select_cols+=" {
+      typeDiv: $typeDiv,
+      type: ""$type"",
+      required: $required_lower,
+      label: ""$label"",
+      autoComplete: ""off"",
+      placeholder: ""$label"",
+      jsonAttribute: ""$column"",
+      value: param.$column,
+      disabled: $disabled_lower,
+	  ${values_list}
+    },`n"
+		$percentual=100*($item_column.size/$total_size)
+		$percentual=[math]::floor($percentual)
+		$COLUMNS+="		{
+		title: '$label',
+		field: '$column',
+		cellStyle: { width: ""${percentual}%"" },
+		width: ""${percentual}%"",
+		headerStyle: { width: ""${percentual}%"" },`n"
 		
-		$where += "	if(${column} !== undefined) query.where = {...query.where, ${column} : ${column}}; `n"
-		$data +=  "	if(${column} !== undefined) query.data = {...query.data, ${column} : ${column}}; `n"
+		
+		if($first_col){
+			$COLUMNS+="		defaultSort: ""asc"",`n"
+			$first_col=(1 -eq 0)
+		}
+		if(!($lookup -eq "")){
+			$COLUMNS+="		lookup: $lookup ? getArrayCombo(""$parentKey"",  $lookup ) : {},`n"
+		}	
+		if($item_column.isCurrency){
+			$COLUMNS+="		currencySetting:{ locale: 'pt-br',currencyCode:'BRL', minimumFractionDigits:0, maximumFractionDigits:2},`n"
+			
+		}
+		if($item_column.isHyperlink){
+			$COLUMNS+="		//@ts-ignore
+		render: rowData => <a href={rowData.url}>Page URL</a>,`n"
+		}else{
+			$is_enum = ($primitive -like "*Enum*")
+			$is_props = ($primitive -like "*Props*")
+			if(($is_enum)-or($is_props)){
+				$COLUMNS+="		type: 'string',`n"
+			}else{
+				$COLUMNS+="		type: '$primitive',`n"
+			}
+			
+		}
+		$COLUMNS+="        },//${percentual}%`n"		
+		
 	}
 	$entity_lower = $entity.name.ToLower()
-	if(!($unique_list_column -eq "")){
-		$unique_code = "const unique = await prismaClient.$entity_lower.findFirst({
-	  where:{
-		#id_check#
-		${unique_list_column}
-	  }
-	})
-	if(unique){
-	  throw new Error(""${name} already exists"")
-	}";	
-	}
-	if(!($role_list -eq "")){
-		$role_list = $role_list.Substring(0,$role_list.Length-1)
-	}
-	if(!($role_list -eq "")){
-		$import_role='import {$role_list} from "../../interface";'
-	}
-	$columns_list = $columns_list.Substring(0,$columns_list.Length-1)
-
-
 	
-	$index = 0
+	$HANDLE_DELETE+="import { ${name}RowDataProps } from ""../pages/${entity_lower}"";
+export const handleRowDelete${name} = async (oldData: ${name}RowDataProps, resolve: Promise<any>) => {
+	const apiClient = setupAPIClient();
+	await apiClient.delete('/${entity_lower}?id=oldData.id');
+	(await resolve)();
+}
+#HANDLE_DELETE#`n"
+
+	$HANDLE_GET+="import { ${name}RowDataProps } from ""../pages/${entity_lower}"";
+export const handleRowGet${name} = async(me : UserProps) => {
+    const apiClient = setupAPIClient();
+    const ${entity_lower} : ${name}RowDataProps[] = (await apiClient.get('/${entity_lower}?created_by=me.id')).data
+    return ${entity_lower};
+}
+#HANDLE_GET#`n"
+	$enums_server_side+="]"
+	
 	$diretorio_atual=(Get-Item .).FullName
-	foreach ($function in $functions) {
-		$function_lower = $function.ToLower()
-		
-		echo ******COPYING CONTROLLER******
-		echo "=>entity: $name"
-		echo "=>entity_lower: $entity_lower"
-		echo "=>columns_list: $columns_list"
-		echo "=>interface_column: $interface_column"
-		echo "=>function: $function"
-		echo "=>controller_param: $controller_param"
-		echo "=>required_code: $required_code"
-		echo "=>unique_code: $unique_code"
-		echo "=>where: $where"
-		echo "=>data: $data"
-		echo "=>action: $action"
-		echo "=>function_lower: $function_lower"
-		$from_param = $from_params[$index]
-		if($from_param -eq "query"){
-			$controller_request = "const { $columns_list } = req.$from_param as unknown as ${name}Request;"
-			$interface_request = ", ${name}Request"
-		}else{
-			$controller_request = "const { $columns_list } = req.$from_param;"
-			$interface_request = ""
-		}
-		echo "=>controller_request: $controller_request"
-		echo "=>interface_request: $interface_request"
-		
-		#copiando o arquivo controller
-		if (!(Test-Path -Path "$diretorio_atual\controllers\$entity_lower")) { mkdir "$diretorio_atual\controllers\$entity_lower"}
-		$controller_file = $function+$name+"Controller.ts"
-		Get-ChildItem -Path "$diretorio_atual\controllers\$entity_lower" -Include "$controller_file" -File -Recurse | foreach { $_.Delete()}
-		Copy-Item -Path "$diretorio_atual\_controller.template" -Destination "$diretorio_atual\controllers\$entity_lower" -Recurse
-		
-		Set-Location "$diretorio_atual\controllers\$entity_lower"		
-		Get-ChildItem -File -Recurse | % { Rename-Item -Path $_.PSPath -NewName $_.Name.replace("_controller.template","$controller_file")}
-		$addedFiles = Get-ChildItem . $controller_file -rec		
-		"const { #columns_list# } = req.#from_param#;"
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#import_role#",$import_role }| Set-Content $file.PSPath}
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#function#",$function }| Set-Content $file.PSPath}
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#entity#",$name }| Set-Content $file.PSPath}
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#entity_lower#",$entity_lower }| Set-Content $file.PSPath}
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#columns_list#",$columns_list }| Set-Content $file.PSPath}
-		
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#controller_request#",$controller_request }| Set-Content $file.PSPath}
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#function_lower#",$function_lower }| Set-Content $file.PSPath}
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#controller_list#",$controller_list }| Set-Content $file.PSPath}
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#interface_request#",$interface_request }| Set-Content $file.PSPath}
-		
-		Set-Location "$diretorio_atual"
-		
-		#copiando o arquivo service
-		echo ******COPYING SERVICE******
-		echo "=>entity: $name"
-		echo "=>entity_lower: $entity_lower"		
-		echo "=>interface_column: $interface_column"
-		echo "=>function: $function"
-		echo "=>controller_param: $controller_param"
-		echo "=>required_code: $required_code"
-		echo "=>unique_code: $unique_code"
-		echo "=>where: $where"
-		echo "=>data: $data"
-		echo "=>action: $action"
-		echo "=>function_lower: $function_lower"
-		
-		if (!(Test-Path -Path "$diretorio_atual\services\$entity_lower")) { mkdir "$diretorio_atual\services\$entity_lower"}
-		$service_file = "${function}${name}Service.ts"
-		Get-ChildItem -Path "$diretorio_atual\services\$entity_lower" -Include "$service_file" -File -Recurse | foreach { $_.Delete()}
-		
-		Copy-Item -Path "$diretorio_atual\_service.template" -Destination "$diretorio_atual\services\$entity_lower" -Recurse
-		Set-Location "$diretorio_atual\services\$entity_lower"
-		Get-ChildItem -File -Recurse | % { Rename-Item -Path $_.PSPath -NewName $_.Name.replace("_service.template","$service_file")}
-		
-		$addedFiles = Get-ChildItem . $service_file -rec
-		
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#entity#",$name }| Set-Content $file.PSPath}
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#entity_lower#",$entity_lower }| Set-Content $file.PSPath}
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#function#",$function }| Set-Content $file.PSPath}
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#interface_column#",$interface_column }| Set-Content $file.PSPath}
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#controller_param#",$controller_param }| Set-Content $file.PSPath}
-		$init_query=""
-		$id_check=""
-		if($function -eq "Create"){
-			$init_query="{data:{$column_init}}"
-			foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#init_query#",$init_query }| Set-Content $file.PSPath}
-			foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#required_code#",$required_code }| Set-Content $file.PSPath}
-			foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#unique_code#",$unique_code }| Set-Content $file.PSPath}
-			foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#where#","" }| Set-Content $file.PSPath}			
-		}
-		if($function -eq "Update"){
-			$id_check=" NOT: {id: {equals: id,},},"
-			$init_query="{where:{},data:{$column_init}}"
-			$where="query.where = {...query.where, id : id};"
-			foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#init_query#",$init_query }| Set-Content $file.PSPath}
-			foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#required_code#",$required_code }| Set-Content $file.PSPath}
-			foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#unique_code#",$unique_code }| Set-Content $file.PSPath}
-		}
-		if($function -eq "List"){
-			$init_query="{where:{}}"
-			foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#init_query#",$init_query }| Set-Content $file.PSPath}
-			foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#unique_code#","" }| Set-Content $file.PSPath}
-			foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#required_code#","" }| Set-Content $file.PSPath}
-			foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#data#","" }| Set-Content $file.PSPath}
-		}
-		if($function -eq "Delete"){
-			$init_query="{where:{}}"
-			foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#init_query#",$init_query }| Set-Content $file.PSPath}
-			foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#unique_code#","" }| Set-Content $file.PSPath}
-			foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#required_code#","" }| Set-Content $file.PSPath}
-			foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#data#","" }| Set-Content $file.PSPath}
-		}
-		
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#id_check#",$id_check }| Set-Content $file.PSPath}
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#where#",$where }| Set-Content $file.PSPath}
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#data#",$data }| Set-Content $file.PSPath}
-		
-		$action=$actions[$index]
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#action#",$action }| Set-Content $file.PSPath}
-		
-		Set-Location "$diretorio_atual"
-		
-		if(!($enum_list -eq "")){
-			echo ******COPYING ENUM******
-			Copy-Item -Path "$diretorio_atual\_enum.template" -Destination "$diretorio_atual\interface\enum.ts" -Recurse
-			$enum_file = "$diretorio_atual\interface\enum.ts"
-			Set-Location "$diretorio_atual\interface"
-			Get-ChildItem -File -Recurse | % { Rename-Item -Path $_.PSPath -NewName $_.Name.replace("_enum.template","$enum_file")}
-			
-			$addedFiles = Get-ChildItem . $enum_file -rec
-			
-			foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#enum_list#",$enum_list }| Set-Content $file.PSPath}
-			
-			Set-Location "$diretorio_atual"	
-		}
-		echo ******COPYING ROUTE******
-		$action_param=$url_action[$index]
-		$router = "
-import {${function}${name}Controller} from ""./controllers/$entity_lower/${function}${name}Controller"";
-router.${action_param}('/$entity_lower', isAuthenticated, new ${function}${name}Controller().handle)
-export { router };
-		"
-		Set-Location "$diretorio_atual"		
-		$route_file = "routes.ts"
-		
-		echo "=>route_file: $route_file"
-		echo "=>router: $router"
-		
-		
-		$addedFiles = Get-ChildItem . $route_file
-		foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "export { router };",$router }| Set-Content $file.PSPath}
-		
-		Set-Location "$diretorio_atual"	
-		$index += 1
+	
+	$IMPORT_LINKS += "import {${param_icon}} from '${param_icon_path}';
+#IMPORT_LINKS#"
+	$LINKS += "
+            <Link href=""/${entity_lower}"">
+				<${param_icon} color=""#FFF"" size={24}/>
+            </Link>
+#LINKS#"
+	
+	
+	if($enums_server_side -eq "[]"){
+		$enums_server_side=""
 	}
+	echo ******CREATING PAGE******
+	echo "=>entity: $name"
+	echo "=>entity_lower: $entity_lower"
+	echo "=>interface_column: $interface_column"
+	echo "=>enums_server_side: $enums_server_side"
+	echo "=>default_columns: $default_columns"
+	echo "=>import_relation: $import_relation"
+	echo "=>list_relation_props: $list_relation_props"
+	echo "=>param_props: $param_props"
+	echo "=>select_cols: $select_cols"
+	echo "=>update_cols: $update_cols"
+	echo "=>param_props_col: $param_props_col"
+	echo "=>query_server_side: $query_server_side"
+	echo "=>param_server_side: $param_server_side"
+	
+	echo "=>COLUMNS: $COLUMNS"
+	
+	#copiando o arquivo controller
+	$path="$diretorio_atual\pages\$entity_lower"
+	if (!(Test-Path -Path "$path")) { mkdir "$path"}
+	$template_file="_entity.template"
+	$index_file = "index.tsx"
+	Get-ChildItem -Path "$path" -Include "$index_file" -File -Recurse | foreach { $_.Delete()}
+	Copy-Item -Path "$diretorio_atual\$template_file" -Destination "$path" -Recurse
+	
+	Set-Location "$path"
+	Get-ChildItem -File -Recurse | % { Rename-Item -Path $_.PSPath -NewName $_.Name.replace("$template_file","$index_file")}
+	$addedFiles = Get-ChildItem . $index_file -rec		
+	
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#entity#",$name }| Set-Content $file.PSPath}
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#entity_lower#",$entity_lower }| Set-Content $file.PSPath}
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#interface_column#",$interface_column }| Set-Content $file.PSPath}
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#enums_server_side#",$enums_server_side }| Set-Content $file.PSPath}
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#default_columns#",$default_columns }| Set-Content $file.PSPath}
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#import_relation#",$import_relation }| Set-Content $file.PSPath}
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#list_relation_props#",$list_relation_props }| Set-Content $file.PSPath}
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#param_props#",$param_props }| Set-Content $file.PSPath}
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#select_cols#",$select_cols }| Set-Content $file.PSPath}
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#update_cols#",$update_cols }| Set-Content $file.PSPath}
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#query_server_side#",$query_server_side }| Set-Content $file.PSPath}
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#param_server_side#",$param_server_side }| Set-Content $file.PSPath}
+	
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#param_props_col#",$param_props_col }| Set-Content $file.PSPath}
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#COLUMNS#",$COLUMNS }| Set-Content $file.PSPath}
+	
+	Set-Location "$diretorio_atual"
+	
+	echo ******CREATING HANDLE DELETE******
+	echo "=>HANDLE_DELETE: $HANDLE_DELETE"
+	
+	$path="$diretorio_atual\utils"		
+	
+	if (!(Test-Path -Path "$path")) { mkdir "$path"}
+	$template_file="_handleDelete.template"
+	$index_file = "handleDelete.ts"
+	Get-ChildItem -Path "$path" -Include "$index_file" -File -Recurse | foreach { $_.Delete()}
+	Copy-Item -Path "$diretorio_atual\$template_file" -Destination "$path" -Recurse
+	
+	Set-Location "$path"
+	Get-ChildItem -File -Recurse | % { Rename-Item -Path $_.PSPath -NewName $_.Name.replace("$template_file","$index_file")}
+	$addedFiles = Get-ChildItem . $index_file -rec
+	
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#HANDLE_DELETE#",$HANDLE_DELETE }| Set-Content $file.PSPath}
+	
+	Set-Location "$diretorio_atual"
+	
+	
+	echo ******CREATING HANDLE GET******
+	echo "=>HANDLE_GET: $HANDLE_GET"
+	
+	$path="$diretorio_atual\utils"		
+	
+	if (!(Test-Path -Path "$path")) { mkdir "$path"}
+	$template_file="_handleGet.template"
+	$index_file = "handleGet.ts"
+	Get-ChildItem -Path "$path" -Include "$index_file" -File -Recurse | foreach { $_.Delete()}
+	Copy-Item -Path "$diretorio_atual\$template_file" -Destination "$path" -Recurse
+	
+	Set-Location "$path"
+	Get-ChildItem -File -Recurse | % { Rename-Item -Path $_.PSPath -NewName $_.Name.replace("$template_file","$index_file")}
+	$addedFiles = Get-ChildItem . $index_file -rec
+	
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#HANDLE_GET#",$HANDLE_GET }| Set-Content $file.PSPath}
+	
+	Set-Location "$diretorio_atual"
+	
+	echo ******CREATING ROUTES******
+	echo "=>IMPORT_LINKS: $IMPORT_LINKS"
+	echo "=>LINKS: $LINKS"
+	
+	$path="$diretorio_atual\utils"		
+	
+	if (!(Test-Path -Path "$path")) { mkdir "$path"}
+	$template_file="_router.template"
+	$index_file = "router.tsx"
+	Get-ChildItem -Path "$path" -Include "$index_file" -File -Recurse | foreach { $_.Delete()}
+	Copy-Item -Path "$diretorio_atual\$template_file" -Destination "$path" -Recurse
+	
+	Set-Location "$path"
+	Get-ChildItem -File -Recurse | % { Rename-Item -Path $_.PSPath -NewName $_.Name.replace("$template_file","$index_file")}
+	$addedFiles = Get-ChildItem . $index_file -rec
+	
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#IMPORT_LINKS#",$IMPORT_LINKS }| Set-Content $file.PSPath}
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#LINKS#",$LINKS }| Set-Content $file.PSPath}
+	
+	Set-Location "$diretorio_atual"
+	
+	
+	
 }
 
+echo ******CLEANING******
 
+$path="$diretorio_atual\utils"
 
+$template_file="_handleDelete.template"
+$index_file = "handleDelete.ts"
+Set-Location "$path"
+$addedFiles = Get-ChildItem . $index_file -rec
 
+foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#HANDLE_DELETE#","" }| Set-Content $file.PSPath}
 
+Set-Location "$diretorio_atual"
+
+$path="$diretorio_atual\utils"		
+$index_file = "handleGet.ts"
+
+Set-Location "$path"
+$addedFiles = Get-ChildItem . $index_file -rec
+
+foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#HANDLE_GET#","" }| Set-Content $file.PSPath}
+
+Set-Location "$diretorio_atual"
+
+$path="$diretorio_atual\utils"		
+$index_file = "router.tsx"
+
+Set-Location "$path"
+$addedFiles = Get-ChildItem . $index_file -rec
+
+foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#IMPORT_LINKS#","" }| Set-Content $file.PSPath}
+foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#LINKS#","" }| Set-Content $file.PSPath}
+
+Set-Location "$diretorio_atual"

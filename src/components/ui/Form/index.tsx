@@ -3,14 +3,13 @@ import styles from './styles.module.scss';
 import { toast } from "react-toastify";
 import {FieldValues, useForm, UseFormRegister} from "react-hook-form";
 import { Button } from '../Button';
-import {CheckBox, Input} from '../Input';
-import {ReactEventHandler, useEffect} from "react";
+import { Input } from '../Input';
+import {useEffect} from "react";
 import {useRouter} from "next/router";
 
 import { ChangeEventHandler, useCallback } from 'react';
 import * as React from "react";
 import {ComboBox, CompleteComboBox} from "../ComboBox";
-import {Role} from "../../../contexts/AuthContext";
 
 export function useConfirmRedirectIfDirty(isDirty: boolean) {
     const router = useRouter()
@@ -94,7 +93,6 @@ export type FormProps = {
 async function saveFormData(data: object, url: string, action: ACTIONFORM) {
     
     try{
-
         const apiClient = setupAPIClient();
         if(action===ACTIONFORM.POST) await apiClient.post(url, data);
         if(action===ACTIONFORM.PATCH) await apiClient.patch(url, data);
@@ -109,7 +107,7 @@ async function saveFormData(data: object, url: string, action: ACTIONFORM) {
 
 export const Form = ({state, setState, url, fields, actionNameButton, postFormAction, action}: Props) => {
     const {register, reset, handleSubmit, setError, formState: {isSubmitting, errors, isDirty}} = useForm();
-
+    
     function handleChange(e: any) {
       if(e)
         if(e.target)
@@ -120,13 +118,8 @@ export const Form = ({state, setState, url, fields, actionNameButton, postFormAc
             }
     }
 
-    function handleCheckBox(e:any){
-        let newState = !state[e.target.name];
-        setState({ ...state, [e.target.name]: newState });
-    }
-
-    function handleChangeCombo(key: string, e:any){
-        (e&&key? setState({ ...state, [key]: e.id }) :"");
+    function handleChangeCombo(key: string, e:any){        
+        (e&&key? setState({ ...state, [key]: e.id }) :"");        
     }
   
     async function onSubmit(e:any) {      
@@ -149,23 +142,14 @@ export const Form = ({state, setState, url, fields, actionNameButton, postFormAc
                 />
             }
             if(item.typeDiv===TYPEELEMENT.CHECKBOX){
-                return <div className={styles.checkbox}><CheckBox
-                    name={item.jsonAttribute}
-                    placeholder={item.placeholder}
-                    type={item.type}
-                    value={item.value}
-                    onChange={handleCheckBox}
-                    disabled={item.disabled}
-                /><label className={styles.label}>{item.label}</label></div>
+                return null;
             }
             if(item.typeDiv===TYPEELEMENT.COMBOBOX){
-                let valuesParam = fields?fields.filter(t=>t.label===item.label).length>0?(fields.filter(t=>t.label===item.label)[0]).values:undefined:undefined;
-                let itemSelected = valuesParam?valuesParam.filter(t=>t.id===item.value):undefined;
                 return <CompleteComboBox
-                    name={item.jsonAttribute}
-                    value={itemSelected?itemSelected[0]:item.value}
-                    setValue={((e)=>{return handleChangeCombo(item.jsonAttribute, e);})}
-                    values={fields?fields.filter(t=>t.label===item.label).length>0?(fields.filter(t=>t.label===item.label)[0]).values:undefined:undefined}
+                name={item.jsonAttribute}
+                value={item.value}
+                setValue={((e)=>{return handleChangeCombo(item.jsonAttribute, e);})}
+                values={fields?fields.filter(t=>t.label===item.label).length>0?(fields.filter(t=>t.label===item.label)[0]).values:undefined:undefined}
                  />
             }
         })}</>
