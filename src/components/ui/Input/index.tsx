@@ -10,8 +10,15 @@ interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement>{}
 
 export function Input({...rest}: InputProps){
   return(
-    <input className={styles.input} {...rest} />
+      <input className={styles.input} {...rest} />
   )
+}
+
+export function CheckBox({...rest}: InputProps){
+      if(rest.value)
+        return (<input className={styles.checkbox} {...rest} checked />)
+      else
+        return (<input className={styles.checkbox} {...rest} />)
 }
 
 

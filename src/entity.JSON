@@ -1,9 +1,6 @@
-{ "name":"Project",
+{ "name":"Project","icon":"VscProject", "icon_path":"react-icons/vsc",
 "column":[
-	{"name":"id","primitive":"string","required":false,"unique":false,"column_type":{"name":""}},
-	{"name":"name","primitive":"string","required":true,"unique":true,"column_type":{"name":""}},
-	{"name":"url","primitive":"string","required":false,"unique":false,"column_type":{"name":""}},
-	{"name":"accountable_id","primitive":"string","required":false,"unique":false,"column_type":{"name":""}},
-	{"name":"created_by","primitive":"string","required":false,"unique":false,"column_type":{"name":""}},
-	{"name":"updated_by","primitive":"string","required":false,"unique":false,"column_type":{"name":""}}
+	{"name":"name","label":"Name","primitive":"string","required":true,"unique":true,"column_type":{"name":"","label":"","parent":"","parentKey":""},"update":true,"disable":false,"type":"text","typeDiv":"TYPEELEMENT.INPUTBOX","size":100, "isCurrency": false,"isHyperlink":false,"path":""},
+	{"name":"url","label":"Url","primitive":"string","required":false,"unique":false,"column_type":{"name":"","label":"","parent":"","parentKey":""},"update":true,"disable":false,"type":"text","typeDiv":"TYPEELEMENT.INPUTBOX","size":150, "isCurrency": false,"isHyperlink":true,"path":""},
+	{"name":"accountable_id","label":"Accountable","primitive":"UserProps","required":false,"unique":false,"column_type":{"name":"signup","label":"","parent":"accountable","parentKey":"name"},"update":true,"disable":false,"type":"text","typeDiv":"TYPEELEMENT.COMBOBOX","size":200, "isCurrency": false,"isHyperlink":false,"path":"/user?active=true"}
 ]}

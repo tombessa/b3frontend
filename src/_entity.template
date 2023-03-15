@@ -1,128 +1,143 @@
-import {FormEvent, useContext, useMemo, useState} from "react";
+import { FormEvent, useContext, useMemo, useState, } from 'react';
 import Head from 'next/head'
 import styles from '../../../styles/home.module.scss';
-import { Input } from '../../components/ui/Input'
-import { Button } from '../../components/ui/Button'
-import {AuthContext} from '../../contexts/AuthContext';
-import {toast} from "react-toastify";
+import {AuthContext, Role} from '../../contexts/AuthContext';
 import {canSSRAuth} from "../../utils/canSSRAuth";
 import {GetServerSidePropsContext} from "next";
 import {ParsedUrlQuery} from "querystring";
 import {setupAPIClient} from "../../services/api";
 import {Header} from "../../components/Header";
-import { ComboBox} from "../../components/ui/ComboBox";
 import {GenericMaterialTableProps, GenericTable} from "../../components/ui/Table";
-import {handleRowUpdate#Entity#} from "../../utils/handleUpdate";
-import {handleRowGet#Entity#} from "../../utils/handleGet";
-import {handleRowDelete#Entity#} from "../../utils/handleDelete";
+import {handleRowDelete#entity#} from "../../utils/handleDelete";
+import {handleRowGet#entity#} from "../../utils/handleGet";
+import { Form, ItemFormProps, TYPEELEMENT, ACTIONFORM } from '../../components/ui/Form/index';
+import { DashboardProps, RowData } from '../../utils/props';
+import { ModalDash } from '../../components/Modal';
+import {Column} from "material-table";
+import { getLookUp, returnDefaultEnum, getArrayCombo } from '../../utils/function';
+#import_relation#
 
-import {#entity_lower#Column} from "../../utils/columns";
+export function #entity#Column(enums: EnumProps[][] #param_props_col#): Column<RowData>[]{
+		return [
+#COLUMNS#
+	];
+}
+export interface #entity#RowDataProps extends #entity#Props, RowData {
 
-export type #Entity#Props={
-    #COL_DEFINED#
 }
 
-export interface #Entity#RowDataProps extends #Entity#Props, RowData {
-
+export type EnumProps = {
+  id: string;
+  value: string;
+  field: string;
 }
 
-export type #Entity#Props = {
-    dashboard: DashboardProps
-    #entity_lower#s: #Entity#RowDataProps[]
+export type #entity#Props={
+  #interface_column#
 }
 
-export default function #Entity#({dashboard, #entity_lower#s}: #Entity#Props) {
-  const {signUp} = useContext(AuthContext);
+export type page#entity#Props = {
+  dashboard: DashboardProps
+  #entity_lower#: #entity#RowDataProps[]
+  enums: EnumProps[][]
+  #list_relation_props#
+}
+
+export default function #entity#({dashboard, #entity_lower#, enums #param_props#}: page#entity#Props) {
   
-  #USE_STATE_INI#
-  /*
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [role, setRole] = useState('USER');
-  const [password, setPassword] = useState('');
-  */
-  
+  const [user, set#entity#] = useState({
+    #default_columns#
+    ...returnDefaultEnum(enums)
+  });  
   const [loading, setLoading] = useState(false);
-  const [#entity_lower#Item, set#Entity#Item] = useState<#Entity#RowDataProps>();
-  const [#entity_lower#Selected, set#Entity#Selected] = useState<#Entity#RowDataProps>();
+  const [#entity#Item, set#entity#Item] = useState<#entity#RowDataProps>();
+  const [#entity#Selected, set#entity#Selected] = useState<#entity#RowDataProps>();
   const [rest, setRest] = useState<GenericMaterialTableProps>();
-  const[list#Entity#, setList#Entity#] = useState<#Entity#RowDataProps[]>([]);
-
+  const[list#entity#s, setList#entity#s] = useState<#entity#RowDataProps[]>([]);
+	
   function clearForm(){
-    #USE_STATE_INI#
-	/*
-	setName('');
-    setEmail('');
-    setRole('USER');
-    setPassword('');
-	*/
+    set#entity#({
+      #default_columns#
+    ...returnDefaultEnum(enums)
+    });
+  }
+  
+  function getFieldsUpdate(param: any):ItemFormProps[]{
+    let ret : ItemFormProps[] = [#update_cols#];
+    return ret;
   }
 
-  async function handle#Entity#(event: FormEvent){
-    event.preventDefault();
-    #REQUIRED_FIELDS_IF#
-      toast.error("Required Fields.");
-      return;
-    }
-    setLoading(true);
-    let data = {
-      #FIELDS_INI#
-    }
-    await signUp(data);
-    let new#Entity# = await handleRowGet#Entity#();    
-    setList#Entity#(new#Entity#);
+  function getFieldsRegister(param: any):ItemFormProps[]{
+    const ret : ItemFormProps[] = [#select_cols#];
+    return ret;
+  }
+
+  async function postFormAction(){
+    set#entity#Selected(undefined);
+    setList#entity#s(await handleRowGet#entity#(dashboard.user));
     setLoading(false);
     clearForm();
   }
 
+
   useMemo(async () => {
-    setList#Entity#(#entity_lower#s);
+    setList#entity#s(#entity_lower#);
   },[]);
 
   useMemo(()=>{
     setRest({
-      columns: #entity_lower#Column(),
-      data: list#Entity#,
-      handleRowDelete: handleRowDelete#Entity#,
-      handleRowUpdate: handleRowUpdate#Entity#,
-      setData: set#Entity#Item,
+      columns: #entity#Column(enums #param_props#),
+      data: list#entity#s,
+      handleRowDelete: handleRowDelete#entity#,
+      setData: set#entity#Item,
       options: {
         pageSize: 10
       }
     });
-  },[list#Entity#]);
+  },[list#entity#s]);  
 
-  const table#Entity#=useMemo(()=>{
-    return(<GenericTable rest={rest} setRest={setRest} selectedRow={#entity_lower#Selected} setSelectedRow={set#Entity#Selected} />);
-  },[rest, #entity_lower#Selected, set#Entity#Selected]);
+
+  const table#entity#=useMemo(()=>{
+    return(<GenericTable rest={rest} setRest={setRest} selectedRow={#entity#Selected} setSelectedRow={set#entity#Selected} />);
+  },[rest, #entity#Selected, set#entity#Selected]);
 
   return (
     <>
     <Head>
-      <title>#Entity# - Page</title>
+      <title>#entity# Registration</title>
     </Head>
-    <Header 
-		name={dashboard.user.name} 
-		email={dashboard.user.email} 
-		id={dashboard.user.id} 
-		role={dashboard.user.role}/>
+    <Header name={dashboard.user.name} email={dashboard.user.email} id={dashboard.user.id} role={dashboard.user.role}/>
 
     <div className={styles.containerCenter}>
-      <div className={styles.default}>
-        <div>#Entity# - Page</div>
-        <form onSubmit={handle#Entity#}>
-          #FORM_ITEMS#
-          <Button
-            type="submit"
-            loading={loading}
-          >
-            Register
-          </Button>
-        </form>
+      <div className={styles.login}>
+        <h1>Register</h1>
 
-
+        <Form
+          postFormAction={postFormAction}
+          state={user}
+          setState={set#entity#}
+          url={'/#entity_lower#'}
+          fields={getFieldsRegister(user)}
+          action={ACTIONFORM.POST}
+        />
+        {#entity#Selected?
+        <ModalDash
+              isOpen={#entity#Selected !== undefined}
+              onRequestClose={function (): void {
+                set#entity#Selected(undefined);
+              } }
+              component={<Form
+                postFormAction={postFormAction}
+                state={#entity#Selected}
+                setState={set#entity#Selected}
+                url={'/#entity_lower#'}
+                fields={getFieldsUpdate(#entity#Selected)}
+                action={ACTIONFORM.PATCH}
+              />}
+        />:
+        <div className={styles.containerGrid}>{table#entity#}</div>}
       </div>
-      <div className={styles.containerGrid}>{table#Entity#}</div>
+
     </div>
     </>
   )
@@ -131,10 +146,12 @@ export default function #Entity#({dashboard, #entity_lower#s}: #Entity#Props) {
 export const getServerSideProps = canSSRAuth(async (ctx: GetServerSidePropsContext<ParsedUrlQuery, string | false | object | undefined>) => {
   const apiClient = setupAPIClient(ctx);
   const me = (await apiClient.get('/me')).data
-  const #entity_lower#s : #Entity#RowDataProps[] = (await apiClient.get('/#entity_lower#s')).data
+  #query_server_side#
   let send = {props:{}};
   send.props = {...send.props, dashboard: {message: {code: 200, message: ""},
-      #entity_lower#: {id: me.id, name: me.name, email: me.email, role: me.role}},
-    #entity_lower#s: #entity_lower#s};
+      user: {id: me.id, name: me.name, email: me.email, role: me.role}},
+	  #enums_server_side#
+	  #param_server_side#
+	  };
   return send;
 })

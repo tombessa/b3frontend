@@ -8,3 +8,4 @@ export const handleRowDeleteUser = async (oldData: SignUpRowDataProps, resolve: 
     (await resolve)();
 }
 
+#HANDLE_DELETE#

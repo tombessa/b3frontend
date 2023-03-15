@@ -9,7 +9,6 @@ import {setupAPIClient} from "../../services/api";
 import {Header} from "../../components/Header";
 import {GenericMaterialTableProps, GenericTable} from "../../components/ui/Table";
 import {userColumn} from "../../utils/columns";
-import {handleRowUpdateUser} from "../../utils/handleUpdate";
 import {handleRowGetUser} from "../../utils/handleGet";
 import {handleRowDeleteUser} from "../../utils/handleDelete";
 import { Form, ItemFormProps, TYPEELEMENT, ACTIONFORM } from '../../components/ui/Form/index';
@@ -77,7 +76,6 @@ export default function SignUp({dashboard, users, roles}: SignUpProps) {
       columns: userColumn(),
       data: listUsers,
       handleRowDelete: handleRowDeleteUser,
-      handleRowUpdate: handleRowUpdateUser,
       setData: setUserItem,
       options: {
         pageSize: 10
@@ -99,6 +97,7 @@ export default function SignUp({dashboard, users, roles}: SignUpProps) {
     }];
     let register  = getFieldsRegister(param);
     register.forEach(t=>ret.push(t));
+
     ret.push({
       typeDiv: TYPEELEMENT.CHECKBOX,
       type: "checkbox",
@@ -171,7 +170,6 @@ export default function SignUp({dashboard, users, roles}: SignUpProps) {
     return(<GenericTable rest={rest} setRest={setRest} selectedRow={userSelected} setSelectedRow={setUserSelected} />);
   },[rest, userSelected, setUserSelected]);
 
-  console.log(userSelected);
   return (
     <>
     <Head>
@@ -187,7 +185,7 @@ export default function SignUp({dashboard, users, roles}: SignUpProps) {
           postFormAction={postFormAction}
           state={user} 
           setState={setUser} 
-          url={'/users'} 
+          url={'/user'} 
           fields={getFieldsRegister(user)} 
           action={ACTIONFORM.POST}
         />
@@ -201,7 +199,7 @@ export default function SignUp({dashboard, users, roles}: SignUpProps) {
                 postFormAction={postFormAction}
                 state={userSelected} 
                 setState={setUserSelected} 
-                url={'/users'} 
+                url={'/user'} 
                 fields={getFieldsUpdate(userSelected)} 
                 action={ACTIONFORM.PATCH}
               />}
@@ -217,7 +215,7 @@ export default function SignUp({dashboard, users, roles}: SignUpProps) {
 export const getServerSideProps = canSSRAuth(async (ctx: GetServerSidePropsContext<ParsedUrlQuery, string | false | object | undefined>) => {
   const apiClient = setupAPIClient(ctx);
   const me = (await apiClient.get('/me')).data
-  const users : SignUpRowDataProps[] = (await apiClient.get('/users')).data
+  const users : SignUpRowDataProps[] = (await apiClient.get('/user')).data
   let send = {props:{}};
   send.props = {...send.props, dashboard: {message: {code: 200, message: ""},
       user: {id: me.id, name: me.name, email: me.email, role: me.role}},
