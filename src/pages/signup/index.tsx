@@ -1,7 +1,7 @@
 import { FormEvent, useContext, useMemo, useState, } from 'react';
 import Head from 'next/head'
 import styles from '../../../styles/home.module.scss';
-import {AuthContext, Role} from '../../contexts/AuthContext';
+import {AuthContext} from '../../contexts/AuthContext';
 import {canSSRAuth} from "../../utils/canSSRAuth";
 import {GetServerSidePropsContext} from "next";
 import {ParsedUrlQuery} from "querystring";
@@ -14,6 +14,8 @@ import {handleRowDeleteUser} from "../../utils/handleDelete";
 import { Form, ItemFormProps, TYPEELEMENT, ACTIONFORM } from '../../components/ui/Form/index';
 import { DashboardProps, RowData } from '../../utils/props';
 import { ModalDash } from '../../components/Modal';
+import LoadingUtil from "../../utils/loading";
+import {Role} from "../../utils/role";
 
 export interface SignUpRowDataProps extends UserProps, RowData {
 
@@ -176,7 +178,7 @@ export default function SignUp({dashboard, users, roles}: SignUpProps) {
       <title>User Registration</title>
     </Head>
     <Header name={dashboard.user.name} email={dashboard.user.email} id={dashboard.user.id} role={dashboard.user.role}/>
-
+    <LoadingUtil/>
     <div className={styles.containerCenter}>
       <div className={styles.login}>
         <h1>Register</h1>

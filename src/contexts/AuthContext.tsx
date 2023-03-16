@@ -5,6 +5,7 @@ import { api } from '../services/apiClient';
 import { destroyCookie, setCookie,  parseCookies } from 'nookies'
 import Router from 'next/router';
 import {toast} from "react-toastify";
+import {Role} from "../utils/role";
 
 
 type AuthContextData = {
@@ -21,15 +22,7 @@ export type LoginUserProps = {
   email: string;
   role: Role;
 }
-export type Role = typeof Role[keyof typeof Role];
 
-export const Role: {
-  USER: 'USER'
-  ADMIN: 'ADMIN'
-} = {
-  USER: 'USER',
-  ADMIN: 'ADMIN',
-}
 
 type SignInProps = {
   email: string;
