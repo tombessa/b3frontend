@@ -10,7 +10,7 @@ export function getLookUp(key:any, param: any[]){
 }
 
 export function getArrayCombo(key:string, param:any[]){
-    let ret : any[] = [];
+    let ret : any[] = [{id:"", value:""}];
     if(Array.isArray(param)){
       param.forEach(t=>ret.push({id:t.id, value:t[key]}))
     }

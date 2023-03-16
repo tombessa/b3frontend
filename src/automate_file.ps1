@@ -211,12 +211,12 @@ foreach ($item_entity in $entity) {
 		$COLUMNS+="        },//${percentual}%`n"		
 		
 	}
-	$entity_lower = $entity.name.ToLower()
+	$entity_lower = $name.ToLower()
 	
 	$HANDLE_DELETE+="import { ${name}RowDataProps } from ""../pages/${entity_lower}"";
 export const handleRowDelete${name} = async (oldData: ${name}RowDataProps, resolve: Promise<any>) => {
 	const apiClient = setupAPIClient();
-	await apiClient.delete('/${entity_lower}?id=oldData.id');
+	await apiClient.delete('/${entity_lower}?id='+oldData.id);
 	(await resolve)();
 }
 #HANDLE_DELETE#`n"
@@ -224,7 +224,7 @@ export const handleRowDelete${name} = async (oldData: ${name}RowDataProps, resol
 	$HANDLE_GET+="import { ${name}RowDataProps } from ""../pages/${entity_lower}"";
 export const handleRowGet${name} = async(me : UserProps) => {
     const apiClient = setupAPIClient();
-    const ${entity_lower} : ${name}RowDataProps[] = (await apiClient.get('/${entity_lower}?created_by=me.id')).data
+    const ${entity_lower} : ${name}RowDataProps[] = (await apiClient.get('/${entity_lower}?created_by='+me.id)).data
     return ${entity_lower};
 }
 #HANDLE_GET#`n"

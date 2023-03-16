@@ -15,6 +15,7 @@ import { DashboardProps, RowData } from '../../utils/props';
 import { ModalDash } from '../../components/Modal';
 import {Column} from "material-table";
 import { getLookUp, returnDefaultEnum, getArrayCombo } from '../../utils/function';
+import LoadingUtil from "../../utils/loading";
 #import_relation#
 
 export function #entity#Column(enums: EnumProps[][] #param_props_col#): Column<RowData>[]{
@@ -81,7 +82,7 @@ export default function #entity#({dashboard, #entity_lower#, enums #param_props#
 
 
   useMemo(async () => {
-    setList#entity#s(#entity_lower#);
+	setList#entity#s(await handleRowGet#entity#(dashboard.user));
   },[]);
 
   useMemo(()=>{
@@ -107,7 +108,7 @@ export default function #entity#({dashboard, #entity_lower#, enums #param_props#
       <title>#entity# Registration</title>
     </Head>
     <Header name={dashboard.user.name} email={dashboard.user.email} id={dashboard.user.id} role={dashboard.user.role}/>
-
+	<LoadingUtil/>
     <div className={styles.containerCenter}>
       <div className={styles.login}>
         <h1>Register</h1>
