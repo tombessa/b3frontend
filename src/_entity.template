@@ -1,7 +1,7 @@
 import { FormEvent, useContext, useMemo, useState, } from 'react';
 import Head from 'next/head'
 import styles from '../../../styles/home.module.scss';
-import {AuthContext, Role} from '../../contexts/AuthContext';
+import {AuthContext} from '../../contexts/AuthContext';
 import {canSSRAuth} from "../../utils/canSSRAuth";
 import {GetServerSidePropsContext} from "next";
 import {ParsedUrlQuery} from "querystring";
@@ -14,7 +14,9 @@ import { Form, ItemFormProps, TYPEELEMENT, ACTIONFORM } from '../../components/u
 import { DashboardProps, RowData } from '../../utils/props';
 import { ModalDash } from '../../components/Modal';
 import {Column} from "material-table";
-import { getLookUp, returnDefaultEnum, getArrayCombo } from '../../utils/function';
+import { getLookUpProps, getLookUpEnum, returnDefaultEnum, getArrayCombo } from '../../utils/function';
+import LoadingUtil from "../../utils/loading";
+#import_enum#
 #import_relation#
 
 export function #entity#Column(enums: EnumProps[][] #param_props_col#): Column<RowData>[]{
@@ -45,7 +47,7 @@ export type page#entity#Props = {
 
 export default function #entity#({dashboard, #entity_lower#, enums #param_props#}: page#entity#Props) {
   
-  const [user, set#entity#] = useState({
+  const [#entity#, set#entity#] = useState<#entity#Props>({
     #default_columns#
     ...returnDefaultEnum(enums)
   });  
@@ -81,7 +83,7 @@ export default function #entity#({dashboard, #entity_lower#, enums #param_props#
 
 
   useMemo(async () => {
-    setList#entity#s(#entity_lower#);
+	setList#entity#s(await handleRowGet#entity#(dashboard.user));
   },[]);
 
   useMemo(()=>{
@@ -107,17 +109,17 @@ export default function #entity#({dashboard, #entity_lower#, enums #param_props#
       <title>#entity# Registration</title>
     </Head>
     <Header name={dashboard.user.name} email={dashboard.user.email} id={dashboard.user.id} role={dashboard.user.role}/>
-
+	<LoadingUtil/>
     <div className={styles.containerCenter}>
       <div className={styles.login}>
         <h1>Register</h1>
 
         <Form
           postFormAction={postFormAction}
-          state={user}
+          state={#entity#}
           setState={set#entity#}
           url={'/#entity_lower#'}
-          fields={getFieldsRegister(user)}
+          fields={getFieldsRegister(#entity#)}
           action={ACTIONFORM.POST}
         />
         {#entity#Selected?

@@ -1,4 +1,9 @@
 
+.hyperLink{
+  text-decoration: underline overline;
+  color: #7400b8;
+}
+
 .containerCenter{
   min-height: 100vh;
   display: flex;
@@ -83,3 +88,4 @@
     width: 90%;
   }
 }
+

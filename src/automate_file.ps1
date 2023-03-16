@@ -9,6 +9,7 @@ class Column{
 	[string]$name
 	[string]$label
 	[string]$primitive
+	[string]$table_type
 	[boolean]$required
 	[boolean]$unique
 	[ColumnType[]]$column_type
@@ -20,6 +21,7 @@ class Column{
 	[boolean]$isCurrency
 	[boolean]$isHyperlink
 	[string]$path
+	[string]$step
 }
 class Entity {
     [string]$name
@@ -52,6 +54,8 @@ foreach ($item_entity in $entity) {
 	$COLUMNS=""
 	$query_server_side=""
 	$param_server_side=""
+	$interface_column=" id: string `n"
+	$import_enum=""
 	$param_icon=$item_entity.icon
 	$param_icon_path=$item_entity.icon_path
 	echo "Entity Name: $name"
@@ -59,6 +63,9 @@ foreach ($item_entity in $entity) {
 		$total_size+=$item_column.size
 	}
 	foreach ($item_column in $item_entity.column) {
+		$step_list=""
+		$enum_item_col_1=""
+		$enum_item_col_2=""
 		$first_col=(1 -eq 1)
 		$lookup=""
 		$lookup_props=""
@@ -74,7 +81,9 @@ foreach ($item_entity in $entity) {
 		$label=$item_column.label
 		$disabled=$item_column.disable
 		$path_server_side=$item_column.path
-		
+		$table_type=$item_column.table_type
+		$step=$item_column.step
+		$parentKey=""
 		
 		echo "	Column Name: $column"
 		echo "	Column Primitive: $primitive"
@@ -92,16 +101,24 @@ foreach ($item_entity in $entity) {
 		$default_columns += "	${column} : undefined,`n"
 		$is_enum = ($primitive -like "*Enum*")
 		if ($is_enum) {
+			$export_enum+="export type $primitive = typeof $primitive[keyof typeof $primitive];`n"
+			$import_enum+="$primitive,"
 			$enums_server_side+="["
-			$enums_server_side+="{"
 			foreach ($item_type in $item_column.column_type) {
 				$type = $item_type.name
 				$label_enum = $item_type.label
+				$parentKey=$item_type.parentKey
 				$enums_server_side+="	{""id"":$primitive.$type, ""value"":""$label_enum"", ""field"": ""${column}""}, `n"
 				$enum_front_side+="	{""id"":$primitive.$type, ""value"":""$label_enum""}, `n"
+				$enum_item_col_1+="$type : '$type'`n"
+				$enum_item_col_2+="$type : '$type',"
 			}
-			$enums_server_side+="}"
-			$enums_server_side+="],"
+			$export_const_enum+="export const $primitive : {
+    $enum_item_col_1
+} = {
+    $enum_item_col_2
+}`n"
+			$enums_server_side+="]"
 			$lookup="enums[$index_enum]"
 			$lookup_props=" enums, "
 			$index_enum+=1
@@ -136,7 +153,12 @@ foreach ($item_entity in $entity) {
 			}
 			
 		}else{
-			$values_list="values: [$enum_front_side],"
+			$values_list="values: $enum_front_side,"
+		}
+		if(!($step -eq "")){
+			$step_list = "	step : ${step},"
+		}else{
+			$step_list = ""
 		}
 		if($disabled){
 			$disabled_lower="true"
@@ -159,6 +181,7 @@ foreach ($item_entity in $entity) {
       jsonAttribute: ""$column"",
       value: param.$column,
       disabled: $disabled_lower,
+	  ${step_list}
 	  ${values_list}
     },`n"
 		}
@@ -172,6 +195,7 @@ foreach ($item_entity in $entity) {
       jsonAttribute: ""$column"",
       value: param.$column,
       disabled: $disabled_lower,
+	  ${step_list}
 	  ${values_list}
     },`n"
 		$percentual=100*($item_column.size/$total_size)
@@ -189,34 +213,40 @@ foreach ($item_entity in $entity) {
 			$first_col=(1 -eq 0)
 		}
 		if(!($lookup -eq "")){
-			$COLUMNS+="		lookup: $lookup ? getArrayCombo(""$parentKey"",  $lookup ) : {},`n"
+			$is_enum = ($primitive -like "*Enum*")
+			$is_props = ($primitive -like "*Props*")
+			if($is_enum){
+				$COLUMNS+="		lookup: $lookup ? getLookUpEnum(""$parentKey"",  $lookup ) : {},`n"
+			}
+			if($is_props){
+				$COLUMNS+="		lookup: $lookup ? getLookUpProps(""$parentKey"",  $lookup ) : {},`n"
+			}
 		}	
 		if($item_column.isCurrency){
 			$COLUMNS+="		currencySetting:{ locale: 'pt-br',currencyCode:'BRL', minimumFractionDigits:0, maximumFractionDigits:2},`n"
 			
 		}
 		if($item_column.isHyperlink){
-			$COLUMNS+="		//@ts-ignore
-		render: rowData => <a href={rowData.url}>Page URL</a>,`n"
+			$COLUMNS+="render: rowData => {
+            //@ts-ignore
+            if(rowData.url)
+                //@ts-ignore
+                return <a target=""_blank"" className={styles.hyperLink} href={rowData.$column}>Page URL</a>
+            else """";
+        }`n"
 		}else{
-			$is_enum = ($primitive -like "*Enum*")
-			$is_props = ($primitive -like "*Props*")
-			if(($is_enum)-or($is_props)){
-				$COLUMNS+="		type: 'string',`n"
-			}else{
-				$COLUMNS+="		type: '$primitive',`n"
-			}
+			$COLUMNS+="		type: '${table_type}',`n"
 			
 		}
 		$COLUMNS+="        },//${percentual}%`n"		
 		
 	}
-	$entity_lower = $entity.name.ToLower()
+	$entity_lower = $name.ToLower()
 	
 	$HANDLE_DELETE+="import { ${name}RowDataProps } from ""../pages/${entity_lower}"";
 export const handleRowDelete${name} = async (oldData: ${name}RowDataProps, resolve: Promise<any>) => {
 	const apiClient = setupAPIClient();
-	await apiClient.delete('/${entity_lower}?id=oldData.id');
+	await apiClient.delete('/${entity_lower}?id='+oldData.id);
 	(await resolve)();
 }
 #HANDLE_DELETE#`n"
@@ -224,7 +254,7 @@ export const handleRowDelete${name} = async (oldData: ${name}RowDataProps, resol
 	$HANDLE_GET+="import { ${name}RowDataProps } from ""../pages/${entity_lower}"";
 export const handleRowGet${name} = async(me : UserProps) => {
     const apiClient = setupAPIClient();
-    const ${entity_lower} : ${name}RowDataProps[] = (await apiClient.get('/${entity_lower}?created_by=me.id')).data
+    const ${entity_lower} : ${name}RowDataProps[] = (await apiClient.get('/${entity_lower}?created_by='+me.id)).data
     return ${entity_lower};
 }
 #HANDLE_GET#`n"
@@ -240,9 +270,8 @@ export const handleRowGet${name} = async(me : UserProps) => {
             </Link>
 #LINKS#"
 	
-	
-	if($enums_server_side -eq "[]"){
-		$enums_server_side=""
+	if(!($import_enum -eq "")){
+		$import_enum = "import { $import_enum } from '../../utils/role';`n"
 	}
 	echo ******CREATING PAGE******
 	echo "=>entity: $name"
@@ -258,6 +287,7 @@ export const handleRowGet${name} = async(me : UserProps) => {
 	echo "=>param_props_col: $param_props_col"
 	echo "=>query_server_side: $query_server_side"
 	echo "=>param_server_side: $param_server_side"
+	echo "=>import_enum: $import_enum"
 	
 	echo "=>COLUMNS: $COLUMNS"
 	
@@ -276,7 +306,7 @@ export const handleRowGet${name} = async(me : UserProps) => {
 	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#entity#",$name }| Set-Content $file.PSPath}
 	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#entity_lower#",$entity_lower }| Set-Content $file.PSPath}
 	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#interface_column#",$interface_column }| Set-Content $file.PSPath}
-	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#enums_server_side#",$enums_server_side }| Set-Content $file.PSPath}
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#enums_server_side#","enums: $enums_server_side, " }| Set-Content $file.PSPath}
 	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#default_columns#",$default_columns }| Set-Content $file.PSPath}
 	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#import_relation#",$import_relation }| Set-Content $file.PSPath}
 	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#list_relation_props#",$list_relation_props }| Set-Content $file.PSPath}
@@ -288,6 +318,7 @@ export const handleRowGet${name} = async(me : UserProps) => {
 	
 	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#param_props_col#",$param_props_col }| Set-Content $file.PSPath}
 	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#COLUMNS#",$COLUMNS }| Set-Content $file.PSPath}
+	foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#import_enum#",$import_enum }| Set-Content $file.PSPath}
 	
 	Set-Location "$diretorio_atual"
 	
@@ -351,9 +382,35 @@ export const handleRowGet${name} = async(me : UserProps) => {
 	
 	Set-Location "$diretorio_atual"
 	
+	Set-Location "$diretorio_atual"
+	
+
+	
 	
 	
 }
+
+echo ******CREATING ENUMS******
+echo "=>export_enum: $export_enum"
+echo "=>export_const_enum: $export_const_enum"
+
+$path="$diretorio_atual\utils"		
+
+if (!(Test-Path -Path "$path")) { mkdir "$path"}
+$template_file="_role.template"
+$index_file = "role.tsx"
+Get-ChildItem -Path "$path" -Include "$index_file" -File -Recurse | foreach { $_.Delete()}
+Copy-Item -Path "$diretorio_atual\$template_file" -Destination "$path" -Recurse
+
+Set-Location "$path"
+Get-ChildItem -File -Recurse | % { Rename-Item -Path $_.PSPath -NewName $_.Name.replace("$template_file","$index_file")}
+$addedFiles = Get-ChildItem . $index_file -rec
+
+foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#export_enum#",$export_enum }| Set-Content $file.PSPath}
+foreach ($file in $addedFiles){(Get-Content $file.PSPath) | Foreach-Object { $_ -replace "#export_const_enum#",$export_const_enum }| Set-Content $file.PSPath}
+
+Set-Location "$diretorio_atual"
+	
 
 echo ******CLEANING******
 

@@ -19,9 +19,9 @@ export function ComboBox({...rest}: ComboBoxProps){
 
 
 export function CompleteComboBox({name, value, setValue, values}: SelectFormProps){
-  
+
   return ((<ComboBox name={name}
-                     value={value?value.id:undefined}
+                     value={value}
                      onChange={((event)=>{
                        if (setValue) {
                          setValue(values ? values.filter(t => t.id === event.target.value)[0] : undefined)

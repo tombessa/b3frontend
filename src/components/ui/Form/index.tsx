@@ -7,7 +7,7 @@ import { Input } from '../Input';
 import {useEffect} from "react";
 import {useRouter} from "next/router";
 
-import { ChangeEventHandler, useCallback } from 'react';
+import { ChangeEventHandler, useCallback, useMemo } from 'react';
 import * as React from "react";
 import {ComboBox, CompleteComboBox} from "../ComboBox";
 
@@ -38,8 +38,8 @@ export function useConfirmRedirectIfDirty(isDirty: boolean) {
 }
 
 type Props = {
-    state:React.SetStateAction<any>
-    setState:React.Dispatch<React.SetStateAction<any>>
+    state: React.SetStateAction<any>
+    setState: React.Dispatch<React.SetStateAction<any>>
     // Where to GET/POST the form data
     url: string
     fields: Array<ItemFormProps>
@@ -68,8 +68,9 @@ export type ItemFormProps = {
     placeholder: string
     jsonAttribute: string
     value: any
-    values? : Array<any>,
+    values? : Array<any>
     disabled : boolean
+    step?: any
 }
 
 export type SelectFormProps = {
@@ -97,24 +98,27 @@ async function saveFormData(data: object, url: string, action: ACTIONFORM) {
         if(action===ACTIONFORM.POST) await apiClient.post(url, data);
         if(action===ACTIONFORM.PATCH) await apiClient.patch(url, data);
         toast.success("Registration made successfully!");
+        return true;
     }catch(err){
         console.log(err);
         toast.error("Erro durante o envio dos dados")
+        return false;
     }
 }
 
 
 
-export const Form = ({state, setState, url, fields, actionNameButton, postFormAction, action}: Props) => {
+export const Form = ({state, setState, url, fields, actionNameButton,  postFormAction, action}: Props) => {
     const {register, reset, handleSubmit, setError, formState: {isSubmitting, errors, isDirty}} = useForm();
     
     function handleChange(e: any) {
+
       if(e)
         if(e.target)
             if (e.target.files) {
                 setState({ ...state, [e.target.name]: e.target.files[0] });
             } else {
-                setState({ ...state, [e.target.name]: e.target.value });
+                setState({...state, [e.target.name]: e.target.value});
             }
     }
 
@@ -122,37 +126,46 @@ export const Form = ({state, setState, url, fields, actionNameButton, postFormAc
         (e&&key? setState({ ...state, [key]: e.id }) :"");        
     }
   
-    async function onSubmit(e:any) {      
-      await saveFormData(state, url, action);
-      postFormAction();
+    async function onSubmit(e:any) {
+        let submit = await saveFormData(state, url, action);
+        postFormAction();
     }
 
-  
-    return (
-      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-        <>{fields.map((item, index)=> {
+
+
+    const form = useMemo(()=>{
+
+        return fields.map((item, index)=> {
+
             if(item.typeDiv===TYPEELEMENT.INPUTBOX){
                 return <Input
                     name={item.jsonAttribute}
                     placeholder={item.placeholder}
                     type={item.type}
-                    value={item.value}
+                    value={(item.value===undefined)?"":item.value}
                     onChange={handleChange}
                     disabled={item.disabled}
+                    step={item.step}
                 />
             }
             if(item.typeDiv===TYPEELEMENT.CHECKBOX){
                 return null;
             }
             if(item.typeDiv===TYPEELEMENT.COMBOBOX){
+                let param=(fields?fields.filter(t=>t.label===item.label).length>0?(fields.filter(t=>t.label===item.label)[0]).values:undefined:undefined);
                 return <CompleteComboBox
-                name={item.jsonAttribute}
-                value={item.value}
-                setValue={((e)=>{return handleChangeCombo(item.jsonAttribute, e);})}
-                values={fields?fields.filter(t=>t.label===item.label).length>0?(fields.filter(t=>t.label===item.label)[0]).values:undefined:undefined}
-                 />
+                    name={item.jsonAttribute}
+                    value={(item.value===undefined)?param?param[0]:undefined:item.value}
+                    setValue={((e)=>{return handleChangeCombo(item.jsonAttribute, e);})}
+                    values={param}
+                />
             }
-        })}</>
+        })
+    }, [fields]);
+
+    return (
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+        <>{form}</>
         <Button type="submit" loading={isSubmitting}>{actionNameButton?actionNameButton:"Register"}</Button>
       </form>
     );
