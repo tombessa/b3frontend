@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="b8ecc29f-102b-4bba-a1f2-722580c9b100" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/columns.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/columns.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -78,7 +79,7 @@
       <workItem from="1678747105686" duration="3836000" />
       <workItem from="1678831991125" duration="5289000" />
       <workItem from="1678914007535" duration="5937000" />
-      <workItem from="1678991428167" duration="16721000" />
+      <workItem from="1678991428167" duration="16825000" />
     </task>
     <servers />
   </component>
