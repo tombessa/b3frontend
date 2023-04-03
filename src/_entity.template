@@ -7,19 +7,19 @@ import {GetServerSidePropsContext} from "next";
 import {ParsedUrlQuery} from "querystring";
 import {setupAPIClient} from "../../services/api";
 import {Header} from "../../components/Header";
-import {GenericMaterialTableProps, GenericTable} from "../../components/ui/Table";
+import {GenericTable, SelectColumnFilter, SliderColumnFilter, NumberRangeColumnFilter} from "../../components/ui/Table";
 import {handleRowDelete#entity#} from "../../utils/handleDelete";
 import {handleRowGet#entity#} from "../../utils/handleGet";
-import { Form, ItemFormProps, TYPEELEMENT, ACTIONFORM } from '../../components/ui/Form/index';
+import { Form, ItemFormProps, TYPEELEMENT, ACTIONFORM } from '../../components/ui/Form';
 import { DashboardProps, RowData } from '../../utils/props';
 import { ModalDash } from '../../components/Modal';
-import {Column} from "material-table";
+import {ColumnProps} from "../../utils/columns";
 import { getLookUpProps, getLookUpEnum, returnDefaultEnum, getArrayCombo } from '../../utils/function';
 import LoadingUtil from "../../utils/loading";
 #import_enum#
 #import_relation#
 
-export function #entity#Column(enums: EnumProps[][] #param_props_col#): Column<RowData>[]{
+export function #entity#Column(): ColumnProps[]{
 		return [
 #COLUMNS#
 	];
@@ -46,24 +46,22 @@ export type page#entity#Props = {
 }
 
 export default function #entity#({dashboard, #entity_lower#, enums #param_props#}: page#entity#Props) {
-  
+
   const [#entity#, set#entity#] = useState<#entity#Props>({
     #default_columns#
     ...returnDefaultEnum(enums)
-  });  
+  });
   const [loading, setLoading] = useState(false);
-  const [#entity#Item, set#entity#Item] = useState<#entity#RowDataProps>();
   const [#entity#Selected, set#entity#Selected] = useState<#entity#RowDataProps>();
-  const [rest, setRest] = useState<GenericMaterialTableProps>();
   const[list#entity#s, setList#entity#s] = useState<#entity#RowDataProps[]>([]);
-	
+
   function clearForm(){
     set#entity#({
       #default_columns#
     ...returnDefaultEnum(enums)
     });
   }
-  
+
   function getFieldsUpdate(param: any):ItemFormProps[]{
     let ret : ItemFormProps[] = [#update_cols#];
     return ret;
@@ -86,22 +84,6 @@ export default function #entity#({dashboard, #entity_lower#, enums #param_props#
 	setList#entity#s(await handleRowGet#entity#(dashboard.user));
   },[]);
 
-  useMemo(()=>{
-    setRest({
-      columns: #entity#Column(enums #param_props#),
-      data: list#entity#s,
-      handleRowDelete: handleRowDelete#entity#,
-      setData: set#entity#Item,
-      options: {
-        pageSize: 10
-      }
-    });
-  },[list#entity#s]);  
-
-
-  const table#entity#=useMemo(()=>{
-    return(<GenericTable rest={rest} setRest={setRest} selectedRow={#entity#Selected} setSelectedRow={set#entity#Selected} />);
-  },[rest, #entity#Selected, set#entity#Selected]);
 
   return (
     <>
@@ -128,6 +110,9 @@ export default function #entity#({dashboard, #entity_lower#, enums #param_props#
               onRequestClose={function (): void {
                 set#entity#Selected(undefined);
               } }
+              item={#entity#Selected}
+              postFormAction={postFormAction}
+              handleRowDeleteEntity={handleRowDelete#entity#}
               component={<Form
                 postFormAction={postFormAction}
                 state={#entity#Selected}
@@ -137,7 +122,10 @@ export default function #entity#({dashboard, #entity_lower#, enums #param_props#
                 action={ACTIONFORM.PATCH}
               />}
         />:
-        <div className={styles.containerGrid}>{table#entity#}</div>}
+        <div className={styles.containerGrid}>
+            <GenericTable columns={#entity#Column()} data={list#entity#s} rowSelected={#entity#Selected} setRowSelected={set#entity#Selected} />
+        </div>
+		}
       </div>
 
     </div>

@@ -7,7 +7,21 @@
     <list default="true" id="b8ecc29f-102b-4bba-a1f2-722580c9b100" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/_entity.template" beforeDir="false" afterPath="$PROJECT_DIR$/src/_entity.template" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/_handleDelete.template" beforeDir="false" afterPath="$PROJECT_DIR$/src/_handleDelete.template" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/automate_file.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/src/automate_file.ps1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Modal/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Modal/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Modal/styles.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Modal/styles.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/Table/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/Table/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/dashboard/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/dashboard/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/signup/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/signup/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/columns.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/columns.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/handleDelete.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/handleDelete.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/handleGet.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/handleGet.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/role.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/role.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/router.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/router.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/styles/globals.scss" beforeDir="false" afterPath="$PROJECT_DIR$/styles/globals.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,21 +52,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Portfolio/manager-project-frontend&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Portfolio\\manager-project-frontend\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Portfolio/manager-project-frontend/src/components/ui/Table",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.keymap",
+    "ts.external.directory.path": "C:\\Portfolio\\manager-project-frontend\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Portfolio\manager-project-frontend\src\components\ui\Table" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -80,6 +102,7 @@
       <workItem from="1678831991125" duration="5289000" />
       <workItem from="1678914007535" duration="5937000" />
       <workItem from="1678991428167" duration="16825000" />
+      <workItem from="1680533218512" duration="18073000" />
     </task>
     <servers />
   </component>

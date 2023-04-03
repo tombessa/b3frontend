@@ -3,7 +3,6 @@ import {FaRegAddressCard} from 'react-icons/fa';
 import Link from 'next/link';
 
 
-
 export function Paths(){
     return(<React.Fragment>
             <Link href="/signup">

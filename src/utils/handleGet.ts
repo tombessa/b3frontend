@@ -10,6 +10,3 @@ export const handleRowGetUser = async() => {
     const users : SignUpRowDataProps[] = (await apiClient.get('/user')).data
     return users;
 }
-
-
-

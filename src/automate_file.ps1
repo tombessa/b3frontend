@@ -200,54 +200,37 @@ foreach ($item_entity in $entity) {
     },`n"
 		$percentual=100*($item_column.size/$total_size)
 		$percentual=[math]::floor($percentual)
+		$size_col=$item_column.size;
 		$COLUMNS+="		{
-		title: '$label',
-		field: '$column',
-		cellStyle: { width: ""${percentual}%"" },
-		width: ""${percentual}%"",
-		headerStyle: { width: ""${percentual}%"" },`n"
-		
-		
-		if($first_col){
-			$COLUMNS+="		defaultSort: ""asc"",`n"
-			$first_col=(1 -eq 0)
-		}
-		if(!($lookup -eq "")){
-			$is_enum = ($primitive -like "*Enum*")
-			$is_props = ($primitive -like "*Props*")
-			if($is_enum){
-				$COLUMNS+="		lookup: $lookup ? getLookUpEnum(""$parentKey"",  $lookup ) : {},`n"
-			}
-			if($is_props){
-				$COLUMNS+="		lookup: $lookup ? getLookUpProps(""$parentKey"",  $lookup ) : {},`n"
-			}
-		}	
-		if($item_column.isCurrency){
-			$COLUMNS+="		currencySetting:{ locale: 'pt-br',currencyCode:'BRL', minimumFractionDigits:0, maximumFractionDigits:2},`n"
-			
-		}
-		if($item_column.isHyperlink){
-			$COLUMNS+="render: rowData => {
-            //@ts-ignore
-            if(rowData.url)
-                //@ts-ignore
-                return <a target=""_blank"" className={styles.hyperLink} href={rowData.$column}>Page URL</a>
-            else """";
-        }`n"
+		Header: '$label',
+		minWidth: $size_col,`n"
+		if($table_type -eq "boolean"){
+		    $COLUMNS+="accessor: d => d.$column.toString(),`n"
+		    $COLUMNS+="Filter: SelectColumnFilter,`n"
+		    $COLUMNS+="filter: 'includes',`n"
 		}else{
-			$COLUMNS+="		type: '${table_type}',`n"
-			
+		    if($table_type -eq "numeric"){
+                $COLUMNS+="accessor: d => d.$column,`n"
+                $COLUMNS+="Filter: SelectColumnFilter,`n"
+                $COLUMNS+="filter: 'includes',`n"
+            }else{
+                if($table_type -eq "string"){
+                    $COLUMNS+="accessor: d => d.$column.toString(),`n"
+                    $COLUMNS+="filter: 'fuzzyText',`n"
+                }
+            }
 		}
-		$COLUMNS+="        },//${percentual}%`n"		
+
+
+		$COLUMNS+="},//${percentual}%`n"
 		
 	}
 	$entity_lower = $name.ToLower()
 	
 	$HANDLE_DELETE+="import { ${name}RowDataProps } from ""../pages/${entity_lower}"";
-export const handleRowDelete${name} = async (oldData: ${name}RowDataProps, resolve: Promise<any>) => {
+export const handleRowDelete${name} = async (oldData: ${name}RowDataProps) => {
 	const apiClient = setupAPIClient();
 	await apiClient.delete('/${entity_lower}?id='+oldData.id);
-	(await resolve)();
 }
 #HANDLE_DELETE#`n"
 

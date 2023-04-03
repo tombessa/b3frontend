@@ -7,7 +7,6 @@ import {canSSRAuth} from "../../utils/canSSRAuth"
 import {DashboardProps} from "../../utils/props";
 import {GetServerSidePropsContext} from "next";
 import {ParsedUrlQuery} from "querystring";
-import Loading from "../../utils/loading";
 import LoadingUtil from "../../utils/loading";
 
 export default function Dashboard({message, user}: DashboardProps){
@@ -18,7 +17,7 @@ export default function Dashboard({message, user}: DashboardProps){
       </Head>
       <div>
 
-        <Header name={user.name} email={user.email} id={user.id} role={user.role}/>
+        <Header name={user?user.name:""} email={user?user.email:""} id={user?user.id:""} role={user?user.role:""}/>
         <LoadingUtil/>
         <main>
         </main>
@@ -28,7 +27,7 @@ export default function Dashboard({message, user}: DashboardProps){
 }
 
 export const getServerSideProps = canSSRAuth(async (ctx: GetServerSidePropsContext<ParsedUrlQuery, string | false | object | undefined>) => {
-    const apiClient = setupAPIClient(ctx);
+  const apiClient = setupAPIClient(ctx);
     const me = (await apiClient.get('/me')).data
     let send = {props:{}};
     send.props = {...send.props, message: {code: 200, message: ""},

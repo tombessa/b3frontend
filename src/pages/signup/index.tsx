@@ -1,4 +1,4 @@
-import { FormEvent, useContext, useMemo, useState, } from 'react';
+import { useContext, useMemo, useState, } from 'react';
 import Head from 'next/head'
 import styles from '../../../styles/home.module.scss';
 import {AuthContext} from '../../contexts/AuthContext';
@@ -7,11 +7,11 @@ import {GetServerSidePropsContext} from "next";
 import {ParsedUrlQuery} from "querystring";
 import {setupAPIClient} from "../../services/api";
 import {Header} from "../../components/Header";
-import {GenericMaterialTableProps, GenericTable} from "../../components/ui/Table";
+import {GenericTable} from "../../components/ui/Table";
 import {userColumn} from "../../utils/columns";
 import {handleRowGetUser} from "../../utils/handleGet";
 import {handleRowDeleteUser} from "../../utils/handleDelete";
-import { Form, ItemFormProps, TYPEELEMENT, ACTIONFORM } from '../../components/ui/Form/index';
+import { Form, ItemFormProps, TYPEELEMENT, ACTIONFORM } from '../../components/ui/Form';
 import { DashboardProps, RowData } from '../../utils/props';
 import { ModalDash } from '../../components/Modal';
 import LoadingUtil from "../../utils/loading";
@@ -45,18 +45,14 @@ export type SignUpProps = {
 
 export default function SignUp({dashboard, users, roles}: SignUpProps) {
   const {signUp} = useContext(AuthContext);
-  
+  const [userSelected, setUserSelected] = useState<SignUpRowDataProps>();
   const [user, setUser] = useState({
     name: '',
     email: '',
     password: '',
     role: Role.USER
   });
-
   const [loading, setLoading] = useState(false);
-  const [userItem, setUserItem] = useState<SignUpRowDataProps>();
-  const [userSelected, setUserSelected] = useState<SignUpRowDataProps>();
-  const [rest, setRest] = useState<GenericMaterialTableProps>();
   const[listUsers, setListUsers] = useState<SignUpRowDataProps[]>([]);
 
   function clearForm(){
@@ -73,17 +69,6 @@ export default function SignUp({dashboard, users, roles}: SignUpProps) {
     setListUsers(users);
   },[]);
 
-  useMemo(()=>{
-    setRest({
-      columns: userColumn(),
-      data: listUsers,
-      handleRowDelete: handleRowDeleteUser,
-      setData: setUserItem,
-      options: {
-        pageSize: 10
-      }
-    });
-  },[listUsers]);
 
   function getFieldsUpdate(param: any):ItemFormProps[]{
     let ret : ItemFormProps[] = [{
@@ -168,10 +153,7 @@ export default function SignUp({dashboard, users, roles}: SignUpProps) {
   }
 
 
-  const tableUser=useMemo(()=>{
-    return(<GenericTable rest={rest} setRest={setRest} selectedRow={userSelected} setSelectedRow={setUserSelected} />);
-  },[rest, userSelected, setUserSelected]);
-
+  
   return (
     <>
     <Head>
@@ -193,10 +175,13 @@ export default function SignUp({dashboard, users, roles}: SignUpProps) {
         />
         {userSelected?
         <ModalDash 
-              isOpen={userSelected !== undefined} 
+              isOpen={userSelected !== undefined}
+              item={userSelected}
               onRequestClose={function (): void {
                 setUserSelected(undefined);
               } }
+              postFormAction={postFormAction}
+              handleRowDeleteEntity={handleRowDeleteUser}
               component={<Form 
                 postFormAction={postFormAction}
                 state={userSelected} 
@@ -206,7 +191,9 @@ export default function SignUp({dashboard, users, roles}: SignUpProps) {
                 action={ACTIONFORM.PATCH}
               />}
         />:
-        <div className={styles.containerGrid}>{tableUser}</div>}
+        <div className={styles.containerGrid}>
+            <GenericTable columns={userColumn()} data={listUsers} rowSelected={userSelected} setRowSelected={setUserSelected} />
+        </div>}
       </div>
       
     </div>

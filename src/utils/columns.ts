@@ -1,72 +1,59 @@
-import {Column} from "material-table";
-import {RowData} from "../components/ui/Table";
+import React from 'react';
+import {SelectColumnFilter, SliderColumnFilter, NumberRangeColumnFilter} from "../components/ui/Table";
 
 
-const never:
-    | "always"
-    | "onUpdate"
-    | "onAdd"
-    | "never" = "never";
+export type ColumnProps = {
+    Header:string;
+    accessor:React.FunctionComponent<any>;
+    minWidth?:Number;
+    filter?:string;
+    canFilter?:boolean;
+    Filter?:React.FunctionComponent<any>;
+    columns?:ColumnProps[];
+}
 
-export function userColumn(): Column<RowData>[]{
+
+export function userColumn(): ColumnProps[]{
     return [
-        {
-            title: 'Id',
-            field: 'id',
-            cellStyle: { width: "10%" },
-            width: "10%",
-            headerStyle: { width: "10%" },
-            editable: never
-        },
+
         //10%
         {
-            title: 'Name',
-            field: 'name',
-            cellStyle: { width: "25%" },
-            width: "25%",
-            headerStyle: { width: "25%" }
+            Header: 'Name',
+            accessor: d => d.name.toString(),
+            minWidth: 180,
+            filter: 'fuzzyText',
         },
         //35%
         {
-            title: 'E-mail',
-            field: 'email',
-            cellStyle: { width: "25%" },
-            width: "25%",
-            headerStyle: { width: "25%" },
-            editable: never
+            Header: 'E-mail',
+            accessor: d => d.email.toString(),
+            minWidth: 180
         },
         //60%
-        {
-            title: 'Password',
-            field: 'password',
-            cellStyle: { width: "10%" },
-            width: "10%",
-            headerStyle: { width: "10%" }
-        },
+
         //70%
         {
-            title: 'Role',
-            field: 'role',
-            cellStyle: { width: "10%" },
-            width: "10%",
-            headerStyle: { width: "10%" }
+            Header: 'Role',
+            accessor: d => d.role.toString(),
+            minWidth: 72,
+            Filter: SelectColumnFilter,
+            filter: 'includes',
         },
         //80%
         {
-            title: 'Try',
-            field: 'try',
-            cellStyle: { width: "10%" },
-            width: "10%",
-            headerStyle: { width: "10%" }
+            Header: 'Try',
+            accessor: d => d.try.toString(),
+            minWidth: 72,
+            Filter: SelectColumnFilter,
+            filter: 'includes',
         },
         //90%
         {
-            title: 'Blocked?',
-            field: 'blocked',
-            type: 'boolean',
-            cellStyle: { width: "10%" },
-            width: "10%",
-            headerStyle: { width: "10%" }
+            Header: 'Blocked?',
+            accessor: d => d.blocked.toString(),
+            minWidth: 72,
+            Filter: SelectColumnFilter,
+            filter: 'includes',
         },
         //100%
     ];

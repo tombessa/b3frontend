@@ -14,6 +14,11 @@
   --dark-900: #101026;
   --dark-700: #1D1D2E;
 
+  --table: #323266;
+  --table-head: #696991;
+  --table-text: #e4e4f0;
+  --table-row-select: #aeaefc;
+
   --gray-100: #8A8A8A;
   --green-900: #3fffa3;
   --red-900: #FF3F4B;
@@ -33,8 +38,10 @@ body{
   background: var(--dark-700)
 }
 
+
+
 body, input, textarea, select, button{
-  font: 400 1rem sans-serif; // 1rem = 16px
+  font: 400 1rem "Calibri Light"; // 1rem = 16px
 }
 
 @media (max-width: 720px){
