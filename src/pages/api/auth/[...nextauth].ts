@@ -13,6 +13,7 @@ import {
     SECRET
 } from "../../../utils/constants";
 
+
 export default NextAuth({
     providers: [
         GithubProvider({

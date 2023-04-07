@@ -6,25 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="b8ecc29f-102b-4bba-a1f2-722580c9b100" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/_entity.template" beforeDir="false" afterPath="$PROJECT_DIR$/src/_entity.template" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/automate_file.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/src/automate_file.ps1" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Header/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Header/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/contexts/AuthContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/contexts/AuthContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/_app.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/_app.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/dashboard/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/dashboard/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/signup/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/signup/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/services/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/api.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/services/apiClient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/apiClient.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/api/auth/[...nextauth].ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/api/auth/[...nextauth].ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/constants.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/function.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/function.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/handleDelete.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/handleDelete.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/props.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/props.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/role.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/role.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/router.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/router.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/styles/globals.scss" beforeDir="false" afterPath="$PROJECT_DIR$/styles/globals.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/styles/home.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/styles/home.module.scss" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,7 +99,7 @@
       <workItem from="1680698043201" duration="6136000" />
       <workItem from="1680790183432" duration="913000" />
       <workItem from="1680792545948" duration="6932000" />
-      <workItem from="1680902521883" duration="4141000" />
+      <workItem from="1680902521883" duration="5478000" />
     </task>
     <servers />
   </component>
