@@ -1,8 +1,21 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
+First, configure .env variables:
+- [ ] NEXT_PUBLIC_API_URL=<"backend url">
+- [ ] NEXT_GITHUB_CLIENT_ID=<"Git Hub Client Id">
+- [ ] NEXT_GITHUB_SECRET_ID=<"Git Hub Secret Id">
+- [ ] NEXT_FACEBOOK_CLIENT_ID=<"Facebook Client Id">
+- [ ] NEXT_FACEBOOK_SECRET_ID=<"Facebook Secret Id">
+- [ ] NEXT_INSTAGRAM_CLIENT_ID=<"Instagram Client Id">
+- [ ] NEXT_INSTAGRAM_SECRET_ID=<"Instagram Secret Id">
+- [ ] NEXT_SECRET=<"Generate a md5 hash for Social Media Login. It's the same variable at Backend.">
+- [ ] NEXT_USE_SOCIAL_LOGIN=<"true"|"false">
+- [ ] NEXT_USE_GITHUB_LOGIN=<"true"|"false">
+- [ ] NEXT_USE_FACEBOOK_LOGIN=<"true"|"false">
+- [ ] NEXT_USE_INSTAGRAM_LOGIN=<"true"|"false">
 
-First, run the development server:
+Then run the development server:
 
 ```bash
 npm run dev

@@ -201,24 +201,41 @@ foreach ($item_entity in $entity) {
 		$percentual=100*($item_column.size/$total_size)
 		$percentual=[math]::floor($percentual)
 		$size_col=$item_column.size;
+
 		$COLUMNS+="		{
 		Header: '$label',
 		minWidth: $size_col,`n"
-		if($table_type -eq "boolean"){
-		    $COLUMNS+="accessor: d => d.$column.toString(),`n"
-		    $COLUMNS+="Filter: SelectColumnFilter,`n"
-		    $COLUMNS+="filter: 'includes',`n"
+
+		if(!($lookup -eq "")){
+			$is_enum = ($primitive -like "*Enum*")
+			$is_props = ($primitive -like "*Props*")
+			if($is_enum){
+				$COLUMNS+="		accessor: d => $lookup ? getLookUpEnum(d.$column, $lookup).$parentKey : """",`n"
+			}
+			if($is_props){
+				$COLUMNS+="		accessor: d => $lookup ? getLookUpProps(d.$column, $lookup).$parentKey : """",`n"
+			}
 		}else{
-		    if($table_type -eq "numeric"){
-                $COLUMNS+="accessor: d => d.$column,`n"
-                $COLUMNS+="Filter: SelectColumnFilter,`n"
-                $COLUMNS+="filter: 'includes',`n"
-            }else{
-                if($table_type -eq "string"){
-                    $COLUMNS+="accessor: d => d.$column.toString(),`n"
-                    $COLUMNS+="filter: 'fuzzyText',`n"
-                }
-            }
+
+			if($table_type -eq "boolean"){
+				$COLUMNS+="accessor: d => d.$column.toString(),`n"
+			}else{
+				$COLUMNS+="accessor: d => d.$column,`n"
+			}
+		}
+
+		if($table_type -eq "boolean"){
+			$COLUMNS+="Filter: SelectColumnFilter,`n"
+			$COLUMNS+="filter: 'includes',`n"
+		}else{
+			if($table_type -eq "numeric"){
+				$COLUMNS+="Filter: SelectColumnFilter,`n"
+				$COLUMNS+="filter: 'includes',`n"
+			}else{
+				if($table_type -eq "string"){
+					$COLUMNS+="filter: 'fuzzyText',`n"
+				}
+			}
 		}
 
 

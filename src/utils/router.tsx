@@ -8,7 +8,5 @@ export function Paths(){
             <Link href="/signup">
                 <FaRegAddressCard color="#FFF" size={24}/>
             </Link>
-
-
         </React.Fragment>);
 }

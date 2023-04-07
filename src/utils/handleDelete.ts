@@ -6,3 +6,5 @@ export const handleRowDeleteUser = async (oldData: SignUpRowDataProps) : Promise
     const apiClient = setupAPIClient();
     await apiClient.patch('/user/remove', {id: oldData.id});
 }
+
+

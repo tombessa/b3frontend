@@ -1,20 +1,20 @@
+import {api, apiSocial} from "../services/apiClient";
+import {destroyCookie, setCookie} from "nookies";
+import {toast} from "react-toastify";
+import Router from "next/router";
+import {useState} from "react";
+import {Role} from "./role";
 
 
 export function getLookUpProps(key:any, param: any[]){
     let lookUpParam:any={};
-    Array.isArray(param)?param.forEach(t=>{
-        if(t[key])
-            lookUpParam[t.id]=t[key];
-    }):{};
-    return lookUpParam;
+    lookUpParam = Array.isArray(param)?param.filter(t => t.id === key):{};
+    return lookUpParam[0];
 }
 export function getLookUpEnum(key:any, param: any[]){
     let lookUpParam:any={};
-    Array.isArray(param)?param.forEach(t=>{
-        if(t[key])
-            lookUpParam[t[key]]=t[key];
-    }):{};
-    return lookUpParam;
+    lookUpParam = Array.isArray(param)?param.filter(t => t.id === key):{};
+    return lookUpParam[0];
 }
 
 

@@ -4,6 +4,32 @@
   color: #7400b8;
 }
 
+.buttonFacebook{
+  border-radius: 0.3rem;
+  color: var(--white);
+  background-color:  var(--facebook-button);
+  &:hover{
+    color: var(--gray-100);
+  }
+}
+.buttonInstagram{
+
+    background: #f09433;
+    background: -moz-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    background: -webkit-linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+    background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f09433', endColorstr='#bc1888',GradientType=1 );
+
+}
+.buttonGitHub{
+  border-radius: 0.3rem;
+  background-color:  var(--gray-900);
+  color:  var(--gray-500);
+  &:hover{
+    color: var(--gray-100);
+  }
+}
+
 .containerCenter{
   min-height: 100vh;
   display: flex;
@@ -22,6 +48,7 @@
   padding: 2rem 1.5rem;
 }
 
+
 .login{
   margin-top: 1rem;
   width: 600px;
@@ -34,6 +61,18 @@
   h1{
     color: var(--white);
     padding-bottom: 1rem;
+  }
+
+  .social {
+    padding-top: 1rem;
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    button{
+      height: 50%;
+      width: 50%;
+      font-size: 1.2rem;
+    }
   }
 
   form{

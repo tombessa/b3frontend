@@ -2,7 +2,7 @@ import {useContext, useMemo} from 'react';
 import styles from './styles.module.scss';
 import Link from 'next/link';
 import Image from 'next/image';
-import {AuthContext} from '../../contexts/AuthContext';
+import {AuthContext, signOutAsSocialMedia} from '../../contexts/AuthContext';
 import {FiLogOut} from 'react-icons/fi';
 
 // @ts-ignore
@@ -12,7 +12,7 @@ import { Paths } from '../../utils/router';
 
 
 export function Header({name, role}: UserProps){
-    const {signOut} = useContext(AuthContext);
+    const {signOutAsSocialMedia} = useContext(AuthContext);
     return(
         <header className={styles.headerContainer}>
             <div className={styles.headerContent}>
@@ -23,7 +23,7 @@ export function Header({name, role}: UserProps){
                     <div>{name}</div>
 
                     <Paths/>
-                    <button onClick={signOut}>
+                    <button onClick={signOutAsSocialMedia}>
                         <FiLogOut color="#FFF" size={24}/>
                     </button>
                 </nav>

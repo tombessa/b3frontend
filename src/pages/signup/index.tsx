@@ -35,6 +35,7 @@ export type UserProps={
   try?: number
   blocked?: boolean
   active?: boolean
+  secret?: string
 }
 
 export type SignUpProps = {

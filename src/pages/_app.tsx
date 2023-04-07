@@ -4,13 +4,25 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { AuthProvider } from '../contexts/AuthContext'
+import {SessionProvider} from "next-auth/react";
+import {useState} from "react";
+import {Role} from "../utils/role";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return (
-   <AuthProvider>
-      <Component {...pageProps} />
-       <ToastContainer autoClose={3000} />
-   </AuthProvider>
+type LoginUserProps = {
+    id?: string;
+    name?: string;
+    email?: string;
+    role?: Role;
+}
+function MyApp({ Component, pageProps:{ session, ...pageProps} }: AppProps) {
+
+    return (
+   <SessionProvider session={session}>
+       <AuthProvider>
+            <Component {...pageProps} />
+            <ToastContainer autoClose={3000} />
+       </AuthProvider>
+   </SessionProvider>
   )
 }
 

@@ -10,6 +10,16 @@ export type DashboardProps = {
     user: UserProps;
 }
 
+export type HomeProps = {
+    message?:any;
+    user?: UserProps;
+    socialLogin?: boolean;
+    useSocialLogin?:boolean;
+    useGitHubLogin?:boolean;
+    useFacebookLogin?:boolean;
+    useInstagramLogin?:boolean;
+}
+
 export type RowData = React.ReactElement<any>;
 
 

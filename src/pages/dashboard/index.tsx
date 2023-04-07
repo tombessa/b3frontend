@@ -8,6 +8,7 @@ import {DashboardProps} from "../../utils/props";
 import {GetServerSidePropsContext} from "next";
 import {ParsedUrlQuery} from "querystring";
 import LoadingUtil from "../../utils/loading";
+import {getSession} from "next-auth/react";
 
 export default function Dashboard({message, user}: DashboardProps){
   return(
@@ -27,7 +28,8 @@ export default function Dashboard({message, user}: DashboardProps){
 }
 
 export const getServerSideProps = canSSRAuth(async (ctx: GetServerSidePropsContext<ParsedUrlQuery, string | false | object | undefined>) => {
-  const apiClient = setupAPIClient(ctx);
+
+    const apiClient = setupAPIClient(ctx);
     const me = (await apiClient.get('/me')).data
     let send = {props:{}};
     send.props = {...send.props, message: {code: 200, message: ""},

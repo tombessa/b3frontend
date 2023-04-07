@@ -19,7 +19,7 @@ import LoadingUtil from "../../utils/loading";
 #import_enum#
 #import_relation#
 
-export function #entity#Column(): ColumnProps[]{
+export function #entity#Column(enums: EnumProps[][] #param_props_col#): ColumnProps[]{
 		return [
 #COLUMNS#
 	];
@@ -123,7 +123,11 @@ export default function #entity#({dashboard, #entity_lower#, enums #param_props#
               />}
         />:
         <div className={styles.containerGrid}>
-            <GenericTable columns={#entity#Column()} data={list#entity#s} rowSelected={#entity#Selected} setRowSelected={set#entity#Selected} />
+            <GenericTable
+                columns={ #entity#Column(enums #param_props#)}
+                data={list#entity#s}
+                rowSelected={#entity#Selected}
+                setRowSelected={set#entity#Selected} />
         </div>
 		}
       </div>

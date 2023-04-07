@@ -1,18 +1,19 @@
 import { createContext, ReactNode, useState } from 'react';
 
-import { api } from '../services/apiClient';
+import {api, apiSocial} from '../services/apiClient';
 
 import { destroyCookie, setCookie,  parseCookies } from 'nookies'
 import Router from 'next/router';
 import {toast} from "react-toastify";
 import {Role} from "../utils/role";
+import {signOut} from 'next-auth/react';
 
 
 type AuthContextData = {
   user: LoginUserProps|undefined;
   isAuthenticated: boolean;
-  signIn: (credentials: SignInProps) => Promise<void>;
-  signOut: () => void;
+  signInAsSocialMedia: (credentials: SignInProps) => Promise<void>;
+  signOutAsSocialMedia: () => void;
   signUp: (credentials : SignUpProps) => Promise<void>;
 }
 
@@ -26,7 +27,8 @@ export type LoginUserProps = {
 
 type SignInProps = {
   email: string;
-  password: string;
+  password?: string;
+  secret?: string;
 }
 
 type PostProps={
@@ -48,9 +50,10 @@ type AuthProviderProps = {
 export const AuthContext = createContext({} as AuthContextData)
 
 
-export function signOut(){
+export function signOutAsSocialMedia(){
   try{
     destroyCookie(undefined, '@nextauth.token')
+    signOut()
     Router.push('/')    
   }catch{
     console.log('error when leaving')
@@ -62,12 +65,21 @@ export function AuthProvider({ children }: AuthProviderProps){
   const isAuthenticated = !!user;
 
 
-  async function signIn({ email, password }: SignInProps){
+  async function signInAsSocialMedia({ email, password, secret }: SignInProps){
     try{
-      const response = await api.post('/session', {
-        email,
-        password
-      })
+      let response;
+      if(password){
+        response = await api.post('/session', {
+          email,
+          password
+        })
+      }else{
+
+        let data = {email: email,
+          key: secret}
+        response = (await apiSocial.post('/sessionSocialMedia',
+            data))
+      }
 
       const { id, name, token, role } = response.data;
 
@@ -113,7 +125,7 @@ export function AuthProvider({ children }: AuthProviderProps){
     }
   }
   return(
-    <AuthContext.Provider value={{ user, isAuthenticated, signIn, signOut, signUp }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, signInAsSocialMedia, signOutAsSocialMedia, signUp }}>
       {children}
     </AuthContext.Provider>
   )
