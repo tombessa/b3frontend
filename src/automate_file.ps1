@@ -4,6 +4,7 @@ class ColumnType{
 	[string]$label
 	[string]$parent
 	[string]$parentKey
+	[boolean]$self
 }
 class Column{
 	[string]$name
@@ -24,6 +25,7 @@ class Column{
 	[string]$step
 }
 class Entity {
+	[string]$label
     [string]$name
 	[Column[]]$column
 	[string]$icon
@@ -41,6 +43,7 @@ Set-Location "$diretorio_atual"
 
 
 foreach ($item_entity in $entity) {
+	$label_entity=""
 	$select_cols=""
 	$update_cols=""
 	$param_props=""
@@ -58,6 +61,8 @@ foreach ($item_entity in $entity) {
 	$import_enum=""
 	$param_icon=$item_entity.icon
 	$param_icon_path=$item_entity.icon_path
+	
+	$label_entity=$item_entity.label
 	echo "Entity Name: $name"
 	foreach ($item_column in $item_entity.column) {
 		$total_size+=$item_column.size
@@ -84,6 +89,7 @@ foreach ($item_entity in $entity) {
 		$table_type=$item_column.table_type
 		$step=$item_column.step
 		$parentKey=""
+		$self=(1 -eq 2)
 		
 		echo "	Column Name: $column"
 		echo "	Column Primitive: $primitive"
@@ -118,7 +124,7 @@ foreach ($item_entity in $entity) {
 } = {
     $enum_item_col_2
 }`n"
-			$enums_server_side+="]"
+			$enums_server_side+="],"
 			$lookup="enums[$index_enum]"
 			$lookup_props=" enums, "
 			$index_enum+=1
@@ -129,18 +135,37 @@ foreach ($item_entity in $entity) {
 					$type = $item_type.name
 					$parent = $item_type.parent
 					$parentKey=$item_type.parentKey
+					$self=$item_type.self
 				}
-				$import_relation +="import { $primitive } from '../$type'; `n"
-				$list_relation_props += "	${type}?: $primitive[] `n"
-				$interface_column +=  "	${parent}? : $primitive[] `n"
-				$param_props +=" ,$type "
-				$query_server_side += "
+				if(!($self)){
+					$import_relation +="import { $primitive } from '../$type'; `n"
+				}
+				
+				
+				if(!($self)){
+					$list_relation_props += "	${type}?: $primitive[] `n"
+					$interface_column +=  "	${parent}? : $primitive[] `n"
+					$param_props +=" ,$type "
+					$query_server_side += "
 	const $type = (await apiClient.get('$path_server_side')).data"
-				$param_server_side += "	${type} : ${type}, `n"
-				$param_props_col += ", ${type}?: $primitive[] "
-				$values_param = " $type "
-				$lookup=" $type "
-				$lookup_props=" $type, "
+					$param_server_side += "	${type} : ${type}, `n"
+					$param_props_col += ", ${type}?: $primitive[] "
+					$values_param = " $type "
+					$lookup=" $type "
+					$lookup_props=" $type, "
+				}else{
+					$list_relation_props += "	${type}Parent?: $primitive[] `n"
+					$interface_column +=  "	${parent}Parent? : $primitive[] `n"
+					$param_props +=" ,${type}Parent "
+					$query_server_side += "
+	const ${type}Parent = (await apiClient.get('$path_server_side')).data"
+					$param_server_side += "	${type}Parent : ${type}Parent, `n"
+					$param_props_col += ", ${type}Parent?: $primitive[] "
+					$values_param = " ${type}Parent "
+					$lookup=" ${type}Parent "
+					$lookup_props=" ${type}Parent, "
+				}
+				
 				
 			}
 		}
@@ -248,6 +273,7 @@ foreach ($item_entity in $entity) {
 export const handleRowDelete${name} = async (oldData: ${name}RowDataProps) => {
 	const apiClient = setupAPIClient();
 	await apiClient.delete('/${entity_lower}?id='+oldData.id);
+	toast.success(""Removed"");
 }
 #HANDLE_DELETE#`n"
 
@@ -265,7 +291,7 @@ export const handleRowGet${name} = async(me : UserProps) => {
 	$IMPORT_LINKS += "import {${param_icon}} from '${param_icon_path}';
 #IMPORT_LINKS#"
 	$LINKS += "
-            <Link href=""/${entity_lower}"">
+            <Link href=""/${entity_lower}""  title={""${label_entity}""}>
 				<${param_icon} color=""#FFF"" size={24}/>
             </Link>
 #LINKS#"

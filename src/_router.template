@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export function Paths(){
     return(<React.Fragment>
-            <Link href="/signup">
+            <Link href="/signup" title={"Sign-Up"}>
                 <FaRegAddressCard color="#FFF" size={24}/>
             </Link>
 			#LINKS#
