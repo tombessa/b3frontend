@@ -8,9 +8,13 @@ import {Role} from "./role";
 
 export function getLookUpProps(key:any, param: any[]){
     let lookUpParam:any={};
-    lookUpParam = Array.isArray(param)?param.filter(t => t.id === key):{};
-    return lookUpParam[0];
+    if(key){
+        lookUpParam = Array.isArray(param)?param.filter(t => t.id === key):{};
+        return lookUpParam[0];
+    }else return "";
+
 }
+
 export function getLookUpEnum(key:any, param: any[]){
     let lookUpParam:any={};
     lookUpParam = Array.isArray(param)?param.filter(t => t.id === key):{};
